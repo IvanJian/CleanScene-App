@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">CleanScene</string>
+
+    <string name="title_activity_launch">LaunchActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="report">Report</string>
+    <string name="new_report_title">Report an incident</string>
+    <string name="litter">Litter</string>
+    <string name="oil">Oil</string>
+    <string name="other">Other</string>
+    <string name="residents">Residents</string>
+    <string name="business_company">Business Company</string>
+    <string name="do_not_know">Do Not Know</string>
+    <string name="pollution_type_prompt">Type of this pollution</string>
+    <string name="source_of_the_pollution">Source of the pollution</string>
+    <string name="location_hint">We can\'t get your location. Please manually mark the polluted place.</string>
+    <string-array name="pollution_type">
+        <item>@string/litter</item>
+        <item>@string/oil</item>
+        <item>@string/other</item>
+    </string-array>
+    <string-array name="pollution_source">
+        <item>@string/do_not_know</item>
+        <item>@string/business_company</item>
+        <item>@string/residents</item>
+    </string-array>
+</resources>

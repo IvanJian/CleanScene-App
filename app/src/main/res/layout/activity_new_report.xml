@@ -9,13 +9,13 @@
     tools:layout_editor_absoluteX="0dp">
 
     <ScrollView
+        android:id="@+id/new_report_scrollview"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp">
+        app:layout_constraintTop_toTopOf="parent">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -128,15 +128,23 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/new_report_source" />
 
-            <com.google.android.gms.maps.MapView
-                android:id="@+id/new_report_location_map"
-                android:layout_width="379dp"
-                android:layout_height="250dp"
+            <RelativeLayout
+                android:id="@+id/new_report_map_father"
+                android:layout_width="0dp"
+                android:layout_height="200dp"
                 android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView8" />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView8">
+
+                <inspiringbits.me.cleanscene.NestedMapView
+                    android:id="@+id/new_report_location_map"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/textView9"
@@ -147,7 +155,7 @@
                 android:text="Description"
                 android:textSize="18sp"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/new_report_location_map"
+                app:layout_constraintTop_toBottomOf="@+id/new_report_map_father"
                 android:layout_marginStart="16dp" />
 
             <EditText
@@ -156,7 +164,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="7dp"
                 android:ems="10"
                 android:inputType="textMultiLine"
                 android:maxLines="5"
@@ -169,10 +177,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:text="Photos"
+                android:textSize="18sp"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/new_report_description_txt" />
+                app:layout_constraintTop_toBottomOf="@+id/new_report_description_txt"
+                android:layout_marginStart="16dp" />
+
+            <GridLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView10"
+                app:layout_constraintHorizontal_bias="0.0"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@mipmap/image_piceker_add" />
+            </GridLayout>
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>

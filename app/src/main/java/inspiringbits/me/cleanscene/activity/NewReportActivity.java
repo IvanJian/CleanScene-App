@@ -8,8 +8,13 @@ import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.HorizontalScrollView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -28,6 +33,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import inspiringbits.me.cleanscene.NestedMapView;
 import inspiringbits.me.cleanscene.R;
 
 public class NewReportActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -41,7 +47,12 @@ public class NewReportActivity extends AppCompatActivity implements OnMapReadyCa
     @BindView(R.id.new_report_source)
     Spinner sourceSpinner;
     @BindView(R.id.new_report_location_map)
-    MapView locationMap;
+    NestedMapView locationMap;
+    @BindView(R.id.new_report_map_father)
+    RelativeLayout mapFather;
+
+    @BindView(R.id.new_report_scrollview)
+    ScrollView hsv;
 
     Marker locationMarker;
     static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
@@ -61,24 +72,21 @@ public class NewReportActivity extends AppCompatActivity implements OnMapReadyCa
         locationMap.getMapAsync(this);
 
         //change the rating label when the rating bar is changing
-        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                if (rating < 1.0f) {
-                    ratingBar.setRating(1.0f);
-                }
-                if (rating == 1.0f) {
-                    ratingLabel.setText("Low");
-                    ratingLabel.setTextColor(Color.parseColor("#66ff4081"));
-                }
-                if (rating == 2.0f) {
-                    ratingLabel.setText("Medium");
-                    ratingLabel.setTextColor(Color.parseColor("#FF6600"));
-                }
-                if (rating == 3.0f) {
-                    ratingLabel.setText("High");
-                    ratingLabel.setTextColor(Color.parseColor("#FF0033"));
-                }
+        ratingBar.setOnRatingBarChangeListener((ratingBar1, rating, fromUser) -> {
+            if (rating < 1.0f) {
+                ratingBar1.setRating(1.0f);
+            }
+            if (rating == 1.0f) {
+                ratingLabel.setText("Low");
+                ratingLabel.setTextColor(Color.parseColor("#66ff4081"));
+            }
+            if (rating == 2.0f) {
+                ratingLabel.setText("Medium");
+                ratingLabel.setTextColor(Color.parseColor("#FF6600"));
+            }
+            if (rating == 3.0f) {
+                ratingLabel.setText("High");
+                ratingLabel.setTextColor(Color.parseColor("#FF0033"));
             }
         });
 

@@ -15,6 +15,14 @@
     <string name="pollution_type_prompt">Type of this pollution</string>
     <string name="source_of_the_pollution">Source of the pollution</string>
     <string name="location_hint">We can\'t get your location. Please manually mark the polluted place.</string>
+    <string name="access_storage_permission">Please give us permission to access your pictures.</string>
+    <string name="image_limit">You can only upload 3 images.</string>
+    <string name="personal_information_reminder">Your personal information won\'t be visible to others.</string>
+    <string name="reminder">Reminder</string>
+    <string name="mr">Mr.</string>
+    <string name="mrs">Mrs.</string>
+    <string name="dr">Dr.</string>
+    <string name="ms">Ms.</string>
     <string-array name="pollution_type">
         <item>@string/litter</item>
         <item>@string/oil</item>
@@ -24,5 +32,11 @@
         <item>@string/do_not_know</item>
         <item>@string/business_company</item>
         <item>@string/residents</item>
+    </string-array>
+    <string-array name="titles">
+        <item>@string/mr</item>
+        <item>@string/mrs</item>
+        <item>@string/ms</item>
+        <item>@string/dr</item>
     </string-array>
 </resources>

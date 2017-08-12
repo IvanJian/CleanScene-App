@@ -1,43 +1,54 @@
 package inspiringbits.me.cleanscene.activity;
 
 import android.Manifest;
-import android.app.ActionBar;
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
+import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.HorizontalScrollView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import inspiringbits.me.cleanscene.NestedMapView;
+import inspiringbits.me.cleanscene.view.NestedMapView;
 import inspiringbits.me.cleanscene.R;
 
 public class NewReportActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    static final int RESULT_LOAD_IMG = 1;
+    static final int MY_PERMISSIONS_REQUEST_STORAGE = 2;
+    static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     @BindView(R.id.new_report_pollution_type_spinner)
     Spinner typeSpinner;
     @BindView(R.id.new_report_rating_bar)
@@ -50,13 +61,25 @@ public class NewReportActivity extends AppCompatActivity implements OnMapReadyCa
     NestedMapView locationMap;
     @BindView(R.id.new_report_map_father)
     RelativeLayout mapFather;
-
+    @BindView(R.id.new_report_add_photo_img)
+    ImageView addPhotoImg;
     @BindView(R.id.new_report_scrollview)
     ScrollView hsv;
-
+    @BindView(R.id.new_report_photo1)
+    SimpleDraweeView photo1;
+    @BindView(R.id.new_report_photo2)
+    SimpleDraweeView photo2;
+    @BindView(R.id.new_report_photo3)
+    SimpleDraweeView photo3;
+    @BindView(R.id.new_report_include_personal)
+    CheckBox includePersonalCb;
+    @BindView(R.id.new_report_personal_info_layout)
+    ConstraintLayout personalInfoLayout;
+    @BindView(R.id.sendToCouncilCb)
+    CheckBox sendToCouncilCb;
     Marker locationMarker;
-    static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
-    private FusedLocationProviderClient mFusedLocationClient;
+    FusedLocationProviderClient mFusedLocationClient;
+    List<Uri> selectedPhotos=new ArrayList<Uri>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,13 +112,108 @@ public class NewReportActivity extends AppCompatActivity implements OnMapReadyCa
                 ratingLabel.setTextColor(Color.parseColor("#FF0033"));
             }
         });
+        
+        addPhotoImg.setOnClickListener(v -> {
+            if (ActivityCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},MY_PERMISSIONS_REQUEST_STORAGE);
+                return;
+            }
+            if (selectedPhotos.size()>2){
+                Toast.makeText(this, R.string.image_limit,Toast.LENGTH_LONG).show();
+                return;
+            }
+            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+            photoPickerIntent.setType("image/*");
+            startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);           
+        });
 
+        includePersonalCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked){
+                //display a dialog
+                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                alertDialog.setTitle(getString(R.string.reminder));
+                alertDialog.setMessage(getString(R.string.personal_information_reminder));
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+                personalInfoLayout.setVisibility(View.VISIBLE);
+            } else{
+                personalInfoLayout.setVisibility(View.GONE);
+            }
+        });
+
+        sendToCouncilCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked){
+                //display a dialog
+                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                alertDialog.setTitle(getString(R.string.reminder));
+                alertDialog.setMessage("By check this, we will send this report to the local council. DO NOT check this if you think the local council doesn't need to be involved.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
+        });
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_STORAGE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                    photoPickerIntent.setType("image/*");
+                    startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+                } else {
+                    Toast.makeText(this, R.string.access_storage_permission,Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK)
+            switch (reqCode){
+                case RESULT_LOAD_IMG:
+                    Uri selectedImage = data.getData();
+                    if (selectedPhotos.size()==0){
+                        selectedPhotos.add(selectedImage);
+                        photo1.setVisibility(View.VISIBLE);
+                        photo1.setImageURI(selectedImage);
+                        break;
+                    } else if (selectedPhotos.size()==1){
+                        selectedPhotos.add(selectedImage);
+                        photo2.setVisibility(View.VISIBLE);
+                        photo2.setImageURI(selectedImage);
+                        break;
+                    } else if (selectedPhotos.size()==2){
+                        selectedPhotos.add(selectedImage);
+                        photo3.setVisibility(View.VISIBLE);
+                        photo3.setImageURI(selectedImage);
+                        break;
+                    } else {
+                        Toast.makeText(this,R.string.image_limit,Toast.LENGTH_LONG).show();
+                    }
+                    break;
+            }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
         Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
         if (mapViewBundle == null) {
             mapViewBundle = new Bundle();

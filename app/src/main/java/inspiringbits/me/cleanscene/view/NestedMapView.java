@@ -1,4 +1,4 @@
-package inspiringbits.me.cleanscene;
+package inspiringbits.me.cleanscene.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -8,7 +8,9 @@ import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 
 /**
- * Created by Yvan on 2017/8/12.
+ * Created by Ivan on 2017/8/12.
+ * This solution is from Emily Sooryum on stackoverflow
+ * https://stackoverflow.com/questions/6546108/mapview-inside-a-scrollview
  */
 
 public class NestedMapView extends MapView {

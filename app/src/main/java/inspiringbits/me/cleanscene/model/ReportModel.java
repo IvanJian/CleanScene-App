@@ -9,8 +9,8 @@ public class ReportModel {
     private String rating;
     private String source;
     private String type;
-    private float Latitude;
-    private float Longitude;
+    private double Latitude;
+    private double Longitude;
     private String description;
     private String photo;
     private boolean isAnonymous;
@@ -20,7 +20,7 @@ public class ReportModel {
     public ReportModel() {
     }
 
-    public ReportModel(String reportId, String rating, String source, String type, float latitude, float longitude, String description, String photo, boolean isAnonymous, AnonymousUserModel anonymousUser, boolean isSendToCouncil) {
+    public ReportModel(String reportId, String rating, String source, String type, double latitude, double longitude, String description, String photo, boolean isAnonymous, AnonymousUserModel anonymousUser, boolean isSendToCouncil) {
         this.reportId = reportId;
         this.rating = rating;
         this.source = source;
@@ -74,19 +74,19 @@ public class ReportModel {
         this.type = type;
     }
 
-    public float getLatitude() {
+    public double getLatitude() {
         return Latitude;
     }
 
-    public void setLatitude(float latitude) {
+    public void setLatitude(double latitude) {
         Latitude = latitude;
     }
 
-    public float getLongitude() {
+    public double getLongitude() {
         return Longitude;
     }
 
-    public void setLongitude(float longitude) {
+    public void setLongitude(double longitude) {
         Longitude = longitude;
     }
 

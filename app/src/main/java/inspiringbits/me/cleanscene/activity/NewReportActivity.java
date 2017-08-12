@@ -15,8 +15,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
@@ -35,12 +37,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import inspiringbits.me.cleanscene.model.AnonymousUserModel;
+import inspiringbits.me.cleanscene.model.BasicMessage;
+import inspiringbits.me.cleanscene.model.ReportModel;
 import inspiringbits.me.cleanscene.view.NestedMapView;
 import inspiringbits.me.cleanscene.R;
 
@@ -77,6 +83,23 @@ public class NewReportActivity extends AppCompatActivity implements OnMapReadyCa
     ConstraintLayout personalInfoLayout;
     @BindView(R.id.sendToCouncilCb)
     CheckBox sendToCouncilCb;
+    @BindView(R.id.new_report_submit)
+    Button submitBtn;
+    @BindView(R.id.new_report_description_txt)
+    EditText description;
+    @BindView(R.id.new_report_fname)
+    EditText fname;
+    @BindView(R.id.new_report_lname)
+    EditText lname;
+    @BindView(R.id.new_report_title)
+    Spinner title;
+    @BindView(R.id.new_report_phoneno)
+    EditText phoneNo;
+    @BindView(R.id.new_report_address)
+    EditText address;
+    @BindView(R.id.new_report_email)
+    EditText email;
+
     Marker locationMarker;
     FusedLocationProviderClient mFusedLocationClient;
     List<Uri> selectedPhotos=new ArrayList<Uri>();
@@ -86,47 +109,52 @@ public class NewReportActivity extends AppCompatActivity implements OnMapReadyCa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_report);
         ButterKnife.bind(this);
-        Bundle mapViewBundle = null;
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        if (savedInstanceState != null) {
-            mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
-        }
-        locationMap.onCreate(mapViewBundle);
-        locationMap.getMapAsync(this);
+        mapInit(savedInstanceState);
+        changeRatingText();
+        photoSelection();
+        checkBoxReminder();
 
-        //change the rating label when the rating bar is changing
-        ratingBar.setOnRatingBarChangeListener((ratingBar1, rating, fromUser) -> {
-            if (rating < 1.0f) {
-                ratingBar1.setRating(1.0f);
-            }
-            if (rating == 1.0f) {
-                ratingLabel.setText("Low");
-                ratingLabel.setTextColor(Color.parseColor("#66ff4081"));
-            }
-            if (rating == 2.0f) {
-                ratingLabel.setText("Medium");
-                ratingLabel.setTextColor(Color.parseColor("#FF6600"));
-            }
-            if (rating == 3.0f) {
-                ratingLabel.setText("High");
-                ratingLabel.setTextColor(Color.parseColor("#FF0033"));
-            }
-        });
-        
-        addPhotoImg.setOnClickListener(v -> {
-            if (ActivityCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},MY_PERMISSIONS_REQUEST_STORAGE);
+        submitBtn.setOnClickListener(v -> {
+            submitBtn.setEnabled(false);
+            String photosUrl=uploadPhotos();
+            if (photosUrl.equals("error")){
+                Toast.makeText(this, R.string.photo_uploading_fail,Toast.LENGTH_LONG).show();
+                submitBtn.setEnabled(true);
                 return;
             }
-            if (selectedPhotos.size()>2){
-                Toast.makeText(this, R.string.image_limit,Toast.LENGTH_LONG).show();
-                return;
+            ReportModel reportModel=new ReportModel();
+            reportModel.setRating(ratingLabel.getText().toString());
+            reportModel.setType(typeSpinner.getSelectedItem().toString());
+            reportModel.setSource(sourceSpinner.getSelectedItem().toString());
+            reportModel.setLatitude(locationMarker.getPosition().latitude);
+            reportModel.setLongitude(locationMarker.getPosition().longitude);
+            reportModel.setDescription(description.getText().toString());
+            reportModel.setPhoto(photosUrl);
+            if (includePersonalCb.isChecked()){
+                AnonymousUserModel userModel=new AnonymousUserModel();
+                userModel.setfName(fname.getText().toString());
+                userModel.setlName(lname.getText().toString());
+                userModel.setAddress(address.getText().toString());
+                userModel.setEmail(email.getText().toString());
+                userModel.setPhoneNo(phoneNo.getText().toString());
+                userModel.setTitle(title.getSelectedItem().toString());
+                reportModel.setAnonymousUser(userModel);
+                reportModel.setAnonymous(true);
             }
-            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-            photoPickerIntent.setType("image/*");
-            startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);           
-        });
+            if (sendToCouncilCb.isChecked()){
+                reportModel.setSendToCouncil(true);
+            }
 
+            Gson gson=new Gson();
+            Log.d("reportJson", "onCreate: "+gson.toJson(reportModel));
+        });
+    }
+
+    private String uploadPhotos() {
+        return "urls";
+    }
+
+    private void checkBoxReminder() {
         includePersonalCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked){
                 //display a dialog
@@ -161,7 +189,53 @@ public class NewReportActivity extends AppCompatActivity implements OnMapReadyCa
                 alertDialog.show();
             }
         });
+    }
 
+    private void mapInit(Bundle savedInstanceState) {
+        Bundle mapViewBundle = null;
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (savedInstanceState != null) {
+            mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
+        }
+        locationMap.onCreate(mapViewBundle);
+        locationMap.getMapAsync(this);
+    }
+
+    private void photoSelection() {
+        addPhotoImg.setOnClickListener(v -> {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},MY_PERMISSIONS_REQUEST_STORAGE);
+                return;
+            }
+            if (selectedPhotos.size()>2){
+                Toast.makeText(this, R.string.image_limit,Toast.LENGTH_LONG).show();
+                return;
+            }
+            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+            photoPickerIntent.setType("image/*");
+            startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+        });
+    }
+
+    private void changeRatingText() {
+        //change the rating label when the rating bar is changing
+        ratingBar.setOnRatingBarChangeListener((ratingBar1, rating, fromUser) -> {
+            if (rating < 1.0f) {
+                ratingBar1.setRating(1.0f);
+            }
+            if (rating == 1.0f) {
+                ratingLabel.setText("Low");
+                ratingLabel.setTextColor(Color.parseColor("#66ff4081"));
+            }
+            if (rating == 2.0f) {
+                ratingLabel.setText("Medium");
+                ratingLabel.setTextColor(Color.parseColor("#FF6600"));
+            }
+            if (rating == 3.0f) {
+                ratingLabel.setText("High");
+                ratingLabel.setTextColor(Color.parseColor("#FF0033"));
+            }
+        });
     }
 
     @Override

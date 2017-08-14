@@ -30,6 +30,9 @@
         <activity android:name=".activity.NewReportActivity"
             android:label="@string/new_report_title"
             android:parentActivityName=".activity.MainActivity"></activity>
+        <activity android:name=".activity.NewReportActivity_2"
+            android:label="@string/new_report_title"
+            android:parentActivityName=".activity.MainActivity"></activity>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDgTQCV5KhjHD0oPHmfAf4w522pMgJPV5I"/>

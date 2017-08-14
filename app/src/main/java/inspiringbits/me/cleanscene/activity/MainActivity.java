@@ -40,6 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.main_report_btn)
     public void newReport(Button button){
-        startActivity(new Intent(this,NewReportActivity.class));
+        startActivity(new Intent(this,NewReportActivity_2.class));
     }
 }

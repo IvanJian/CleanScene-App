@@ -8,11 +8,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -44,13 +44,12 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import inspiringbits.me.cleanscene.R;
 import inspiringbits.me.cleanscene.model.AnonymousUserModel;
-import inspiringbits.me.cleanscene.model.BasicMessage;
 import inspiringbits.me.cleanscene.model.ReportModel;
 import inspiringbits.me.cleanscene.view.NestedMapView;
-import inspiringbits.me.cleanscene.R;
 
-public class NewReportActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class NewReportActivity_2 extends AppCompatActivity implements OnMapReadyCallback {
 
     static final int RESULT_LOAD_IMG = 1;
     static final int MY_PERMISSIONS_REQUEST_STORAGE = 2;
@@ -77,28 +76,15 @@ public class NewReportActivity extends AppCompatActivity implements OnMapReadyCa
     SimpleDraweeView photo2;
     @BindView(R.id.new_report_photo3)
     SimpleDraweeView photo3;
-    @BindView(R.id.new_report_include_personal)
-    CheckBox includePersonalCb;
-    @BindView(R.id.new_report_personal_info_layout)
-    ConstraintLayout personalInfoLayout;
-    @BindView(R.id.sendToCouncilCb)
-    CheckBox sendToCouncilCb;
     @BindView(R.id.new_report_submit)
     Button submitBtn;
     @BindView(R.id.new_report_description_txt)
     EditText description;
-    @BindView(R.id.new_report_fname)
-    EditText fname;
-    @BindView(R.id.new_report_lname)
-    EditText lname;
-    @BindView(R.id.new_report_title)
-    Spinner title;
-    @BindView(R.id.new_report_phoneno)
-    EditText phoneNo;
-    @BindView(R.id.new_report_address)
-    EditText address;
-    @BindView(R.id.new_report_email)
-    EditText email;
+    @BindView(R.id.new_report_more_detail_cb)
+    CheckBox moreDetailCb;
+    @BindView(R.id.new_report_detail_layout)
+    ConstraintLayout detailLayout;
+
 
     Marker locationMarker;
     FusedLocationProviderClient mFusedLocationClient;
@@ -112,7 +98,14 @@ public class NewReportActivity extends AppCompatActivity implements OnMapReadyCa
         mapInit(savedInstanceState);
         changeRatingText();
         photoSelection();
-        checkBoxReminder();
+        moreDetailCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+           if (isChecked){
+               detailLayout.setVisibility(View.VISIBLE);
+           } else {
+               detailLayout.setVisibility(View.GONE);
+           }
+        });
+
 
         submitBtn.setOnClickListener(v -> {
             submitBtn.setEnabled(false);
@@ -130,20 +123,7 @@ public class NewReportActivity extends AppCompatActivity implements OnMapReadyCa
             reportModel.setLongitude(locationMarker.getPosition().longitude);
             reportModel.setDescription(description.getText().toString());
             reportModel.setPhoto(photosUrl);
-            if (includePersonalCb.isChecked()){
-                AnonymousUserModel userModel=new AnonymousUserModel();
-                userModel.setfName(fname.getText().toString());
-                userModel.setlName(lname.getText().toString());
-                userModel.setAddress(address.getText().toString());
-                userModel.setEmail(email.getText().toString());
-                userModel.setPhoneNo(phoneNo.getText().toString());
-                userModel.setTitle(title.getSelectedItem().toString());
-                reportModel.setAnonymousUser(userModel);
-                reportModel.setAnonymous(true);
-            }
-            if (sendToCouncilCb.isChecked()){
-                reportModel.setSendToCouncil(true);
-            }
+
 
             Gson gson=new Gson();
             Log.d("reportJson", "onCreate: "+gson.toJson(reportModel));
@@ -154,42 +134,6 @@ public class NewReportActivity extends AppCompatActivity implements OnMapReadyCa
         return "urls";
     }
 
-    private void checkBoxReminder() {
-        includePersonalCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked){
-                //display a dialog
-                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-                alertDialog.setTitle(getString(R.string.reminder));
-                alertDialog.setMessage(getString(R.string.personal_information_reminder));
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-                personalInfoLayout.setVisibility(View.VISIBLE);
-            } else{
-                personalInfoLayout.setVisibility(View.GONE);
-            }
-        });
-
-        sendToCouncilCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked){
-                //display a dialog
-                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-                alertDialog.setTitle(getString(R.string.reminder));
-                alertDialog.setMessage("By check this, we will send this report to the local council. DO NOT check this if you think the local council doesn't need to be involved.");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-            }
-        });
-    }
 
     private void mapInit(Bundle savedInstanceState) {
         Bundle mapViewBundle = null;

@@ -3,23 +3,26 @@
     package="inspiringbits.me.cleanscene">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <uses-feature android:name="android.hardware.location.gps" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".App"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.MainActivity"
-            android:label="Clean Scene"></activity>
+            android:label="Clean Scene" />
         <activity android:name=".activity.LaunchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,15 +30,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.NewReportActivity"
+        <activity
+            android:name=".activity.NewReportActivity"
             android:label="@string/new_report_title"
-            android:parentActivityName=".activity.MainActivity"></activity>
-        <activity android:name=".activity.NewReportActivity_2"
+            android:parentActivityName=".activity.MainActivity" />
+        <activity
+            android:name=".activity.NewReportActivity_2"
             android:label="@string/new_report_title"
-            android:parentActivityName=".activity.MainActivity"></activity>
+            android:parentActivityName=".activity.MainActivity" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDgTQCV5KhjHD0oPHmfAf4w522pMgJPV5I"/>
+            android:value="AIzaSyDgTQCV5KhjHD0oPHmfAf4w522pMgJPV5I" />
+
+        <activity android:name=".activity.ViewReportsOnMapActivity"
+            android:label="@string/report_map_title"
+            android:parentActivityName=".activity.MainActivity"></activity>
     </application>
 
 </manifest>

@@ -98,6 +98,7 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
         mapInit(savedInstanceState);
         changeRatingText();
         photoSelection();
+
         moreDetailCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
            if (isChecked){
                detailLayout.setVisibility(View.VISIBLE);
@@ -151,13 +152,34 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
                 ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},MY_PERMISSIONS_REQUEST_STORAGE);
                 return;
             }
-            if (selectedPhotos.size()>2){
-                Toast.makeText(this, R.string.image_limit,Toast.LENGTH_LONG).show();
+            if (selectedPhotos.size()==3){
+                v.setVisibility(View.GONE);
                 return;
             }
             Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
             photoPickerIntent.setType("image/*");
             startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+        });
+        photo1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setDataAndType(selectedPhotos.get(0), "image/*");
+                startActivity(intent);
+            }
+        });
+        photo2.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setDataAndType(selectedPhotos.get(1), "image/*");
+            startActivity(intent);
+        });
+        photo3.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setDataAndType(selectedPhotos.get(2), "image/*");
+            startActivity(intent);
         });
     }
 
@@ -221,6 +243,7 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
                         selectedPhotos.add(selectedImage);
                         photo3.setVisibility(View.VISIBLE);
                         photo3.setImageURI(selectedImage);
+                        addPhotoImg.setVisibility(View.GONE);
                         break;
                     } else {
                         Toast.makeText(this,R.string.image_limit,Toast.LENGTH_LONG).show();

@@ -38,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.main_map_btn)
+    public void reportMap(Button button){
+        startActivity(new Intent(this,ViewReportsOnMapActivity.class));
+    }
+
     @OnClick(R.id.main_report_btn)
     public void newReport(Button button){
         startActivity(new Intent(this,NewReportActivity_2.class));

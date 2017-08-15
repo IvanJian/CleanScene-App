@@ -138,12 +138,9 @@ public class NewReportActivity extends AppCompatActivity implements OnMapReadyCa
                 userModel.setEmail(email.getText().toString());
                 userModel.setPhoneNo(phoneNo.getText().toString());
                 userModel.setTitle(title.getSelectedItem().toString());
-                reportModel.setAnonymousUser(userModel);
-                reportModel.setAnonymous(true);
+
             }
-            if (sendToCouncilCb.isChecked()){
-                reportModel.setSendToCouncil(true);
-            }
+
 
             Gson gson=new Gson();
             Log.d("reportJson", "onCreate: "+gson.toJson(reportModel));

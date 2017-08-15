@@ -117,15 +117,20 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
                 return;
             }
             ReportModel reportModel=new ReportModel();
-            reportModel.setRating(ratingLabel.getText().toString());
-            reportModel.setType(typeSpinner.getSelectedItem().toString());
-            reportModel.setSource(sourceSpinner.getSelectedItem().toString());
-            reportModel.setLatitude(locationMarker.getPosition().latitude);
-            reportModel.setLongitude(locationMarker.getPosition().longitude);
-            reportModel.setDescription(description.getText().toString());
-            reportModel.setPhoto(photosUrl);
-
-
+            if (moreDetailCb.isChecked()){
+                reportModel.setRating(ratingLabel.getText().toString());
+                reportModel.setType(typeSpinner.getSelectedItem().toString());
+                reportModel.setSource(sourceSpinner.getSelectedItem().toString());
+                reportModel.setLatitude(locationMarker.getPosition().latitude);
+                reportModel.setLongitude(locationMarker.getPosition().longitude);
+                reportModel.setDescription(description.getText().toString());
+                reportModel.setPhoto(photosUrl);
+                reportModel.setLocationName("location");
+                reportModel.setHasMoreDetail(true);
+            }else {
+                reportModel.setPhoto(photosUrl);
+                reportModel.setHasMoreDetail(false);
+            }
             Gson gson=new Gson();
             Log.d("reportJson", "onCreate: "+gson.toJson(reportModel));
         });

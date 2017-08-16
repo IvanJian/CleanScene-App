@@ -6,12 +6,12 @@ package inspiringbits.me.cleanscene.model;
 
 public class BasicMessage {
     private String code;
-    private boolean isSuccess;
+    private boolean status;
     private String content;
 
     public BasicMessage(String code, boolean isSuccess, String content) {
         this.code = code;
-        this.isSuccess = isSuccess;
+        this.status = isSuccess;
         this.content = content;
     }
 
@@ -26,12 +26,12 @@ public class BasicMessage {
         this.code = code;
     }
 
-    public boolean isSuccess() {
-        return isSuccess;
+    public boolean getStatus() {
+        return status;
     }
 
-    public void setSuccess(boolean success) {
-        isSuccess = success;
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     public String getContent() {

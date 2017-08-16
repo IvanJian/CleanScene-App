@@ -5,14 +5,19 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +25,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -39,15 +45,24 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import inspiringbits.me.cleanscene.ImageUpload;
 import inspiringbits.me.cleanscene.R;
 import inspiringbits.me.cleanscene.model.AnonymousUserModel;
+import inspiringbits.me.cleanscene.model.BasicMessage;
 import inspiringbits.me.cleanscene.model.ReportModel;
 import inspiringbits.me.cleanscene.view.NestedMapView;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NewReportActivity_2 extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -84,6 +99,10 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
     CheckBox moreDetailCb;
     @BindView(R.id.new_report_detail_layout)
     ConstraintLayout detailLayout;
+    @BindView(R.id.progressBar2)
+    ProgressBar pBar;
+    @BindView(R.id.new_report_mask)
+    ImageView maskImg;
 
 
     Marker locationMarker;
@@ -95,10 +114,35 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_report_2);
         ButterKnife.bind(this);
+        maskImg.setOnClickListener(v->{
+            return;
+        });
         mapInit(savedInstanceState);
         changeRatingText();
         photoSelection();
+        submitReport();
+    }
 
+    private BasicMessage uploadPhoto(int index) throws IOException {
+        Uri uri=selectedPhotos.get(index);
+        final InputStream imageStream = getContentResolver().openInputStream(uri);
+        final Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        BasicMessage imgMsg=new BasicMessage();
+        imgMsg.setContent(encodedImage);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(getString(R.string.base_url))
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ImageUpload imageUpload=retrofit.create(ImageUpload.class);
+        BasicMessage basicMessage=imageUpload.uploadImage(imgMsg).execute().body();
+        return basicMessage;
+    }
+
+    private void submitReport() {
         moreDetailCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
            if (isChecked){
                detailLayout.setVisibility(View.VISIBLE);
@@ -109,8 +153,23 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
 
 
         submitBtn.setOnClickListener(v -> {
+            if (selectedPhotos.size()==0){
+                Toast.makeText(this,"Please upload at least one photo.",Toast.LENGTH_LONG).show();
+                return;
+            }
+            maskImg.setVisibility(View.VISIBLE);
+            pBar.setVisibility(View.VISIBLE);
             submitBtn.setEnabled(false);
-            String photosUrl=uploadPhotos();
+            UploadPhotoAsync upload=new UploadPhotoAsync(selectedPhotos);
+            upload.execute();
+            /*String photosUrl="";
+            try {
+                photosUrl=upload.execute().get();
+            } catch (InterruptedException e) {
+                photosUrl="error";
+            } catch (ExecutionException e) {
+                photosUrl="error";
+            }
             if (photosUrl.equals("error")){
                 Toast.makeText(this, R.string.photo_uploading_fail,Toast.LENGTH_LONG).show();
                 submitBtn.setEnabled(true);
@@ -129,16 +188,16 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
                 reportModel.setHasMoreDetail(true);
             }else {
                 reportModel.setPhoto(photosUrl);
+                reportModel.setLatitude(locationMarker.getPosition().latitude);
+                reportModel.setLongitude(locationMarker.getPosition().longitude);
                 reportModel.setHasMoreDetail(false);
             }
             Gson gson=new Gson();
-            Log.d("reportJson", "onCreate: "+gson.toJson(reportModel));
+            Log.d("reportJson", "onCreate: "+gson.toJson(reportModel));*/
+
         });
     }
 
-    private String uploadPhotos() {
-        return "urls";
-    }
 
 
     private void mapInit(Bundle savedInstanceState) {
@@ -344,5 +403,84 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
         super.onLowMemory();
         locationMap.onLowMemory();
     }
+
+    @Override
+    public void onBackPressed() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to exit?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        NewReportActivity_2.this.finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+
+    }
+
+    private class UploadPhotoAsync extends AsyncTask<Void,Void,String>{
+
+        List<Uri> uriList;
+
+        public UploadPhotoAsync(List<Uri> uriList) {
+            this.uriList = uriList;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                String urls="";
+                for (int i= 0;i<uriList.size();i++){
+                    BasicMessage msg=uploadPhoto(i);
+                    if (msg.getStatus()){
+                        urls+=msg.getContent()+"*";
+                    } else {
+                        return "error";
+                    }
+                }
+                return urls;
+            } catch (IOException e) {
+                Log.d("error", "doInBackground: "+e.getMessage());
+                return "error";
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if (s.equals("error")){
+                Toast.makeText(NewReportActivity_2.this, R.string.photo_uploading_fail,Toast.LENGTH_LONG).show();
+                submitBtn.setEnabled(true);
+                return;
+            }
+            ReportModel reportModel=new ReportModel();
+            if (moreDetailCb.isChecked()){
+                reportModel.setRating(ratingLabel.getText().toString());
+                reportModel.setType(typeSpinner.getSelectedItem().toString());
+                reportModel.setSource(sourceSpinner.getSelectedItem().toString());
+                reportModel.setLatitude(locationMarker.getPosition().latitude);
+                reportModel.setLongitude(locationMarker.getPosition().longitude);
+                reportModel.setDescription(description.getText().toString());
+                reportModel.setPhoto(s);
+                reportModel.setLocationName("location");
+                reportModel.setHasMoreDetail(true);
+            }else {
+                reportModel.setPhoto(s);
+                reportModel.setLatitude(locationMarker.getPosition().latitude);
+                reportModel.setLongitude(locationMarker.getPosition().longitude);
+                reportModel.setHasMoreDetail(false);
+            }
+            Gson gson=new Gson();
+            Log.d("reportJson", "onCreate: "+gson.toJson(reportModel));
+        }
+    }
+
+
 
 }

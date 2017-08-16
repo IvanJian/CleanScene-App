@@ -1,52 +1,30 @@
 package inspiringbits.me.cleanscene.model;
 
+import java.util.Calendar;
+
 /**
  * Created by Ivan on 2017/8/12.
  */
 
 public class ReportModel {
-    private String reportId;
+    private Integer reportId;
     private String rating;
     private String source;
     private String type;
-    private double Latitude;
-    private double Longitude;
+    private double latitude;
+    private double longitude;
     private String description;
     private String photo;
-    private boolean isAnonymous;
-    private AnonymousUserModel anonymousUser;
-    private boolean isSendToCouncil;
+    private String locationName;
+    private boolean hasMoreDetail;
+    private String deviceId;
+    private Calendar uploadTime;
 
-    public ReportModel() {
-    }
-
-    public ReportModel(String reportId, String rating, String source, String type, double latitude, double longitude, String description, String photo, boolean isAnonymous, AnonymousUserModel anonymousUser, boolean isSendToCouncil) {
-        this.reportId = reportId;
-        this.rating = rating;
-        this.source = source;
-        this.type = type;
-        Latitude = latitude;
-        Longitude = longitude;
-        this.description = description;
-        this.photo = photo;
-        this.isAnonymous = isAnonymous;
-        this.anonymousUser = anonymousUser;
-        this.isSendToCouncil = isSendToCouncil;
-    }
-
-    public boolean isSendToCouncil() {
-        return isSendToCouncil;
-    }
-
-    public void setSendToCouncil(boolean sendToCouncil) {
-        isSendToCouncil = sendToCouncil;
-    }
-
-    public String getReportId() {
+    public Integer getReportId() {
         return reportId;
     }
 
-    public void setReportId(String reportId) {
+    public void setReportId(Integer reportId) {
         this.reportId = reportId;
     }
 
@@ -75,19 +53,19 @@ public class ReportModel {
     }
 
     public double getLatitude() {
-        return Latitude;
+        return latitude;
     }
 
     public void setLatitude(double latitude) {
-        Latitude = latitude;
+        this.latitude = latitude;
     }
 
     public double getLongitude() {
-        return Longitude;
+        return longitude;
     }
 
     public void setLongitude(double longitude) {
-        Longitude = longitude;
+        this.longitude = longitude;
     }
 
     public String getDescription() {
@@ -106,19 +84,35 @@ public class ReportModel {
         this.photo = photo;
     }
 
-    public boolean isAnonymous() {
-        return isAnonymous;
+    public String getLocationName() {
+        return locationName;
     }
 
-    public void setAnonymous(boolean anonymous) {
-        isAnonymous = anonymous;
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 
-    public AnonymousUserModel getAnonymousUser() {
-        return anonymousUser;
+    public boolean isHasMoreDetail() {
+        return hasMoreDetail;
     }
 
-    public void setAnonymousUser(AnonymousUserModel anonymousUser) {
-        this.anonymousUser = anonymousUser;
+    public void setHasMoreDetail(boolean hasMoreDetail) {
+        this.hasMoreDetail = hasMoreDetail;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public Calendar getUploadTime() {
+        return uploadTime;
+    }
+
+    public void setUploadTime(Calendar uploadTime) {
+        this.uploadTime = uploadTime;
     }
 }

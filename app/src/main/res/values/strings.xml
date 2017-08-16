@@ -25,6 +25,7 @@
     <string name="ms">Ms.</string>
     <string name="photo_uploading_fail">Failed to upload pictures. Please try later.</string>
     <string name="report_map_title">Historical Reports</string>
+    <string name="base_url">http://192.168.0.16:8080</string>
     <string-array name="pollution_type">
         <item>@string/litter</item>
         <item>@string/oil</item>

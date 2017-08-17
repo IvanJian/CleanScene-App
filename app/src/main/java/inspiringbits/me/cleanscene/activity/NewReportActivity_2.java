@@ -12,7 +12,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -22,7 +21,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -46,20 +44,18 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import inspiringbits.me.cleanscene.ImageUpload;
+import inspiringbits.me.cleanscene.rest_service.ImageUpload;
 import inspiringbits.me.cleanscene.R;
-import inspiringbits.me.cleanscene.model.AnonymousUserModel;
 import inspiringbits.me.cleanscene.model.BasicMessage;
 import inspiringbits.me.cleanscene.model.ReportModel;
+import inspiringbits.me.cleanscene.rest_service.ReportService;
 import inspiringbits.me.cleanscene.view.NestedMapView;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -428,9 +424,29 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
     private class UploadPhotoAsync extends AsyncTask<Void,Void,String>{
 
         List<Uri> uriList;
+        ReportModel reportModel;
 
         public UploadPhotoAsync(List<Uri> uriList) {
             this.uriList = uriList;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            reportModel=new ReportModel();
+            if (moreDetailCb.isChecked()){
+                reportModel.setRating(ratingLabel.getText().toString());
+                reportModel.setType(typeSpinner.getSelectedItem().toString());
+                reportModel.setSource(sourceSpinner.getSelectedItem().toString());
+                reportModel.setLatitude(locationMarker.getPosition().latitude);
+                reportModel.setLongitude(locationMarker.getPosition().longitude);
+                reportModel.setDescription(description.getText().toString());
+                reportModel.setLocationName("location");
+                reportModel.setHasMoreDetail(true);
+            }else {
+                reportModel.setLatitude(locationMarker.getPosition().latitude);
+                reportModel.setLongitude(locationMarker.getPosition().longitude);
+                reportModel.setHasMoreDetail(false);
+            }
         }
 
         @Override
@@ -445,7 +461,18 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
                         return "error";
                     }
                 }
-                return urls;
+                reportModel.setPhoto(urls);
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(getString(R.string.base_url))
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+                ReportService reportService=retrofit.create(ReportService.class);
+                BasicMessage msg=reportService.createReport(reportModel).execute().body();
+                if (msg.getStatus()){
+                    return msg.getContent();
+                }
+                Log.d("submit_error", "doInBackground: "+msg.getContent());
+                return "error";
             } catch (IOException e) {
                 Log.d("error", "doInBackground: "+e.getMessage());
                 return "error";
@@ -456,28 +483,15 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
         protected void onPostExecute(String s) {
             if (s.equals("error")){
                 Toast.makeText(NewReportActivity_2.this, R.string.photo_uploading_fail,Toast.LENGTH_LONG).show();
+                maskImg.setVisibility(View.GONE);
+                pBar.setVisibility(View.GONE);
                 submitBtn.setEnabled(true);
                 return;
+            } else {
+                Intent intent=new Intent(NewReportActivity_2.this,ReportDetailActivity.class);
+                intent.putExtra("reportId",s);
+                NewReportActivity_2.this.startActivity(intent);
             }
-            ReportModel reportModel=new ReportModel();
-            if (moreDetailCb.isChecked()){
-                reportModel.setRating(ratingLabel.getText().toString());
-                reportModel.setType(typeSpinner.getSelectedItem().toString());
-                reportModel.setSource(sourceSpinner.getSelectedItem().toString());
-                reportModel.setLatitude(locationMarker.getPosition().latitude);
-                reportModel.setLongitude(locationMarker.getPosition().longitude);
-                reportModel.setDescription(description.getText().toString());
-                reportModel.setPhoto(s);
-                reportModel.setLocationName("location");
-                reportModel.setHasMoreDetail(true);
-            }else {
-                reportModel.setPhoto(s);
-                reportModel.setLatitude(locationMarker.getPosition().latitude);
-                reportModel.setLongitude(locationMarker.getPosition().longitude);
-                reportModel.setHasMoreDetail(false);
-            }
-            Gson gson=new Gson();
-            Log.d("reportJson", "onCreate: "+gson.toJson(reportModel));
         }
     }
 

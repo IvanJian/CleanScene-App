@@ -1,4 +1,4 @@
-package inspiringbits.me.cleanscene;
+package inspiringbits.me.cleanscene.rest_service;
 
 import inspiringbits.me.cleanscene.model.BasicMessage;
 import retrofit2.Call;

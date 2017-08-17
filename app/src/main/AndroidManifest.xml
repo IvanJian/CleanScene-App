@@ -43,9 +43,12 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDgTQCV5KhjHD0oPHmfAf4w522pMgJPV5I" />
 
-        <activity android:name=".activity.ViewReportsOnMapActivity"
+        <activity
+            android:name=".activity.ViewReportsOnMapActivity"
             android:label="@string/report_map_title"
-            android:parentActivityName=".activity.MainActivity"></activity>
+            android:parentActivityName=".activity.MainActivity" />
+        <activity android:name=".activity.ReportDetailActivity"
+            android:parentActivityName=".activity.ViewReportsOnMapActivity"></activity>
     </application>
 
 </manifest>

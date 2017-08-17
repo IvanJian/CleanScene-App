@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,8 +21,11 @@ import inspiringbits.me.cleanscene.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.main_report_btn)
-    Button reportBtn;
+    @BindView(R.id.main_report)
+    ImageView reportBtn;
+    @BindView(R.id.main_map)
+    ImageView mapBtn;
+
     static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION=1;
 
     @Override
@@ -38,13 +42,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.main_map_btn)
-    public void reportMap(Button button){
-        startActivity(new Intent(this,ViewReportsOnMapActivity.class));
-    }
-
-    @OnClick(R.id.main_report_btn)
-    public void newReport(Button button){
+    @OnClick(R.id.main_report)
+    public void newReport(ImageView view){
         startActivity(new Intent(this,NewReportActivity_2.class));
     }
+
+    @OnClick(R.id.main_map)
+    public void mapView(ImageView view){
+        startActivity(new Intent(this,ReportDetailActivity.class));
+    }
+
 }

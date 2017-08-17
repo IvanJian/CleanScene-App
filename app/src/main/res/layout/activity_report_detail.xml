@@ -8,69 +8,84 @@
     tools:context="inspiringbits.me.cleanscene.activity.ReportDetailActivity">
 
     <ScrollView
+        android:id="@+id/report_detial_scrollview"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="#DCDCDC"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
+        app:layout_constraintVertical_bias="0.0"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintVertical_bias="0.0">
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1">
 
         <android.support.constraint.ConstraintLayout
-            android:layout_marginBottom="50dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50dp">
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraint1"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Report ID:"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="0dp"
+                android:background="@color/cardview_light_background"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:text="TextView"
-                android:textSize="18sp"
-                app:layout_constraintLeft_toRightOf="@+id/textView"
-                app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Report ID:"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1px"
-                app:layout_constraintTop_toBottomOf="@+id/textView"
-                android:background="@android:color/darker_gray"
-                android:layout_marginTop="16dp"
-                android:id="@+id/view3" />
+                <TextView
+                    android:id="@+id/report_detail_report_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="TextView"
+                    android:textSize="18sp"
+                    app:layout_constraintLeft_toRightOf="@+id/textView"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </android.support.constraint.ConstraintLayout>
 
             <android.support.v7.widget.CardView
                 android:id="@+id/report_detail_image_card_1"
                 android:layout_width="0dp"
-                android:layout_height="190dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
-                android:layout_marginTop="32dp"
-                app:cardElevation="10dp"
+                android:layout_height="210dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:visibility="visible"
+                app:cardElevation="5dp"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/view3">
+                app:layout_constraintTop_toBottomOf="@+id/constraint1"
+                tools:layout_editor_absoluteY="93dp">
 
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/report_detail_image_view_1"
@@ -83,11 +98,14 @@
             <android.support.v7.widget.CardView
                 android:id="@+id/report_detail_image_card_2"
                 android:layout_width="0dp"
-                android:layout_height="190dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
-                android:layout_marginTop="32dp"
-                app:cardElevation="10dp"
+                android:layout_height="210dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:cardElevation="5dp"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -104,11 +122,14 @@
             <android.support.v7.widget.CardView
                 android:id="@+id/report_detail_image_card_3"
                 android:layout_width="0dp"
-                android:layout_height="190dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
-                android:layout_marginTop="32dp"
-                app:cardElevation="10dp"
+                android:layout_height="210dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:cardElevation="5dp"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -125,16 +146,19 @@
             <android.support.v7.widget.CardView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="32dp"
-                app:cardElevation="10dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                app:cardElevation="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/report_detail_image_card_3"
-                android:layout_marginBottom="32dp">
+                app:layout_constraintVertical_bias="0.0">
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
@@ -145,13 +169,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        app:layout_constraintGuide_percent="0.3" />
+                        app:layout_constraintGuide_percent="0.3"
+                        tools:layout_editor_absoluteX="130dp"
+                        tools:layout_editor_absoluteY="814dp" />
 
                     <TextView
                         android:id="@+id/textView3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="24dp"
+                        android:layout_marginStart="24dp"
                         android:layout_marginTop="16dp"
                         android:text="Time"
                         android:textSize="18sp"
@@ -164,18 +191,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
                         android:layout_marginTop="16dp"
-                        android:text="TextView"
+                        android:text="Unknown"
                         android:textSize="18sp"
                         app:layout_constraintLeft_toLeftOf="@+id/guideline3"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <View
                         android:id="@+id/view"
-                        android:layout_width="fill_parent"
-                        android:layout_height="1px"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
                         android:layout_marginTop="16dp"
                         android:background="@android:color/darker_gray"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
                         fresco:layout_constraintTop_toBottomOf="@+id/textView3" />
 
                     <TextView
@@ -183,6 +213,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="24dp"
+                        android:layout_marginStart="24dp"
                         android:layout_marginTop="16dp"
                         android:text="Rating"
                         android:textSize="18sp"
@@ -195,50 +226,56 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
                         android:layout_marginTop="16dp"
-                        android:text="TextView"
+                        android:text="Unknown"
                         android:textSize="18sp"
                         app:layout_constraintLeft_toLeftOf="@+id/guideline3"
                         app:layout_constraintTop_toBottomOf="@+id/view" />
 
                     <View
                         android:id="@+id/view2"
-                        android:layout_width="fill_parent"
-                        android:layout_height="1px"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
                         android:layout_marginTop="16dp"
                         android:background="@android:color/darker_gray"
-                        fresco:layout_constraintTop_toBottomOf="@+id/textView21"
-                     />
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        fresco:layout_constraintTop_toBottomOf="@+id/textView21" />
 
                     <TextView
                         android:id="@+id/textView23"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="24dp"
+                        android:layout_marginStart="24dp"
                         android:layout_marginTop="16dp"
                         android:text="Type"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/view2" />
+                        app:layout_constraintTop_toBottomOf="@+id/view2" />
 
                     <TextView
                         android:id="@+id/report_detail_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
                         android:layout_marginTop="16dp"
-                        android:text="TextView"
+                        android:text="Unknown"
                         android:textSize="18sp"
                         app:layout_constraintLeft_toLeftOf="@+id/guideline3"
                         app:layout_constraintTop_toBottomOf="@+id/view2" />
 
                     <View
                         android:id="@+id/view4"
-                        android:layout_width="fill_parent"
-                        android:layout_height="1px"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
                         android:layout_marginTop="16dp"
                         android:background="@android:color/darker_gray"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
                         fresco:layout_constraintTop_toBottomOf="@+id/textView23" />
 
                     <TextView
@@ -246,6 +283,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="24dp"
+                        android:layout_marginStart="24dp"
                         android:layout_marginTop="16dp"
                         android:text="Source"
                         android:textSize="18sp"
@@ -258,18 +296,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
                         android:layout_marginTop="16dp"
-                        android:text="TextView"
+                        android:text="Unknown"
                         android:textSize="18sp"
                         app:layout_constraintLeft_toLeftOf="@+id/guideline3"
                         app:layout_constraintTop_toBottomOf="@+id/view4" />
 
                     <View
                         android:id="@+id/view5"
-                        android:layout_width="fill_parent"
-                        android:layout_height="1px"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
                         android:layout_marginTop="16dp"
                         android:background="@android:color/darker_gray"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
                         fresco:layout_constraintTop_toBottomOf="@+id/textView25" />
 
                     <TextView
@@ -277,12 +318,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="24dp"
+                        android:layout_marginStart="24dp"
                         android:layout_marginTop="16dp"
                         android:text="Description"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/view5" />
+                        app:layout_constraintTop_toBottomOf="@+id/view5" />
 
                     <TextView
                         android:id="@+id/report_detail_description"
@@ -290,16 +332,27 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
                         android:layout_marginLeft="24dp"
+                        android:layout_marginStart="24dp"
                         android:layout_marginTop="16dp"
-                        android:text="TextView"
+                        android:text="Unknown"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/textView27" />
+                        app:layout_constraintTop_toBottomOf="@+id/textView27" />
                 </android.support.constraint.ConstraintLayout>
             </android.support.v7.widget.CardView>
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/report_detail_pbar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

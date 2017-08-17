@@ -47,8 +47,15 @@
             android:name=".activity.ViewReportsOnMapActivity"
             android:label="@string/report_map_title"
             android:parentActivityName=".activity.MainActivity" />
-        <activity android:name=".activity.ReportDetailActivity"
+        <activity
+            android:name=".activity.ReportDetailActivity"
+            android:label="Incident Report"
             android:parentActivityName=".activity.ViewReportsOnMapActivity"></activity>
+        <activity
+            android:name=".activity.PictureActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_picture"
+            android:theme="@style/FullscreenTheme"></activity>
     </application>
 
 </manifest>

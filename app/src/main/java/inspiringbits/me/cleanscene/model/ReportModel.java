@@ -11,14 +11,20 @@ public class ReportModel {
     private String rating;
     private String source;
     private String type;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
     private String description;
     private String photo;
     private String locationName;
-    private boolean hasMoreDetail;
+    private Boolean hasMoreDetail;
     private String deviceId;
-    private Calendar uploadTime;
+    private String date;
+    private String time;
+
+
+
+    public ReportModel() {
+    }
 
     public Integer getReportId() {
         return reportId;
@@ -26,6 +32,14 @@ public class ReportModel {
 
     public void setReportId(Integer reportId) {
         this.reportId = reportId;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 
     public String getRating() {
@@ -52,21 +66,6 @@ public class ReportModel {
         this.type = type;
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
 
     public String getDescription() {
         return description;
@@ -92,27 +91,43 @@ public class ReportModel {
         this.locationName = locationName;
     }
 
-    public boolean isHasMoreDetail() {
+    public Boolean isHasMoreDetail() {
         return hasMoreDetail;
     }
 
-    public void setHasMoreDetail(boolean hasMoreDetail) {
+    public void setHasMoreDetail(Boolean hasMoreDetail) {
         this.hasMoreDetail = hasMoreDetail;
     }
 
-    public String getDeviceId() {
-        return deviceId;
+    public Double getLatitude() {
+        return latitude;
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
 
-    public Calendar getUploadTime() {
-        return uploadTime;
+    public Double getLongitude() {
+        return longitude;
     }
 
-    public void setUploadTime(Calendar uploadTime) {
-        this.uploadTime = uploadTime;
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

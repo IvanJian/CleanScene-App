@@ -1,0 +1,20 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <me.relex.photodraweeview.PhotoDraweeView
+        android:id="@+id/picture_pic"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:failureImageScaleType="centerInside"
+        app:placeholderImage="@drawable/img_placeholder"
+        app:placeholderImageScaleType="fitCenter"
+        app:progressBarAutoRotateInterval="1000"
+        app:progressBarImage="@drawable/img_placeholder"
+        app:progressBarImageScaleType="centerInside" />
+
+</FrameLayout>

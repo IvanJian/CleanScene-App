@@ -49,7 +49,9 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.main_map)
     public void mapView(ImageView view){
-        startActivity(new Intent(this,ReportDetailActivity.class));
+        Intent intent=new Intent(this,ReportDetailActivity.class);
+        intent.putExtra("reportId","13");
+        startActivity(intent);
     }
 
 }

@@ -124,7 +124,7 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
         final InputStream imageStream = getContentResolver().openInputStream(uri);
         final Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
         byte[] imageBytes = baos.toByteArray();
         String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         BasicMessage imgMsg=new BasicMessage();
@@ -223,22 +223,22 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
         photo1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                intent.setDataAndType(selectedPhotos.get(0), "image/*");
+                Intent intent = new Intent(NewReportActivity_2.this,PictureActivity.class);
+                Uri uri=selectedPhotos.get(0);
+                intent.putExtra("uri",uri);
                 startActivity(intent);
             }
         });
         photo2.setOnClickListener(v -> {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.setDataAndType(selectedPhotos.get(1), "image/*");
+            Intent intent = new Intent(NewReportActivity_2.this,PictureActivity.class);
+            Uri uri=selectedPhotos.get(1);
+            intent.putExtra("uri",uri);
             startActivity(intent);
         });
         photo3.setOnClickListener(v -> {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.setDataAndType(selectedPhotos.get(2), "image/*");
+            Intent intent = new Intent(NewReportActivity_2.this,PictureActivity.class);
+            Uri uri=selectedPhotos.get(2);
+            intent.putExtra("uri",uri);
             startActivity(intent);
         });
     }
@@ -491,6 +491,7 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
                 Intent intent=new Intent(NewReportActivity_2.this,ReportDetailActivity.class);
                 intent.putExtra("reportId",s);
                 NewReportActivity_2.this.startActivity(intent);
+                NewReportActivity_2.this.finish();
             }
         }
     }

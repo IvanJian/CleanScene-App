@@ -66,6 +66,8 @@ public class ReportDetailActivity extends AppCompatActivity {
     CardView card3;
     @BindView(R.id.report_detail_image_card_1)
     CardView card1;
+    @BindView(R.id.report_detail_location)
+    TextView location;
 
 
     @Override
@@ -107,12 +109,12 @@ public class ReportDetailActivity extends AppCompatActivity {
                 return;
             }
             time.setText(reportModel.getDate()+" "+reportModel.getTime());
-            if (reportModel.isHasMoreDetail()){
-                rating.setText(reportModel.getRating());
-                type.setText(reportModel.getType());
-                source.setText(reportModel.getSource());
-                description.setText(reportModel.getDescription());
-            }
+
+            rating.setText(reportModel.getRating());
+            type.setText(reportModel.getType());
+            source.setText(reportModel.getSource());
+            description.setText(reportModel.getDescription());
+            location.setText(reportModel.getLocationName());
 
             String[] urls=reportModel.getPhoto().split("\\*");
             for (int i=0;i<urls.length;i++){

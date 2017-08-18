@@ -2,8 +2,10 @@ package inspiringbits.me.cleanscene.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +14,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -42,6 +45,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -104,6 +108,7 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
     Marker locationMarker;
     FusedLocationProviderClient mFusedLocationClient;
     List<Uri> selectedPhotos=new ArrayList<Uri>();
+    static final String MY_REPORT="my_report";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -452,6 +457,19 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
                 ReportService reportService=retrofit.create(ReportService.class);
                 BasicMessage msg=reportService.createReport(reportModel).execute().body();
                 if (msg.getStatus()){
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(NewReportActivity_2.this);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    String reportsJson=sharedPref.getString(NewReportActivity_2.MY_REPORT,"");
+                    Gson gson=new Gson();
+                    List<ReportModel> reportModels=new ArrayList<ReportModel>();
+                    if (!"".equals(reportsJson)){
+                        reportModels=gson.fromJson(reportsJson,new TypeToken<List<ReportModel>>(){}.getType());
+                    }
+                    reportModel.setReportId(Integer.parseInt(msg.getContent()));
+                    reportModels.add(reportModel);
+                    editor.putString(NewReportActivity_2.MY_REPORT,gson.toJson(reportModels));
+                    Log.d("report", "doInBackground: "+gson.toJson(reportModels));
+                    editor.apply();
                     return msg.getContent();
                 }
                 Log.d("submit_error", "doInBackground: "+msg.getContent());

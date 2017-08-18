@@ -50,12 +50,21 @@
         <activity
             android:name=".activity.ReportDetailActivity"
             android:label="Incident Report"
-            android:parentActivityName=".activity.ViewReportsOnMapActivity"></activity>
+            android:parentActivityName=".activity.ViewReportsOnMapActivity" />
         <activity
             android:name=".activity.PictureActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_picture"
-            android:theme="@style/FullscreenTheme"></activity>
+            android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name=".activity.VolunteerCentreActivity"
+            android:label="Volunteer"
+            android:parentActivityName=".activity.MainActivity" />
+
+        <activity android:name=".activity.MyReportActivity"
+            android:label="My Reports"
+            android:parentActivityName=".activity.MainActivity"
+            ></activity>
     </application>
 
 </manifest>

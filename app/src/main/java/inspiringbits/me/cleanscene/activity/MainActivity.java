@@ -1,16 +1,11 @@
 package inspiringbits.me.cleanscene.activity;
 
 import android.Manifest;
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -25,6 +20,10 @@ public class MainActivity extends AppCompatActivity {
     ImageView reportBtn;
     @BindView(R.id.main_map)
     ImageView mapBtn;
+    @BindView(R.id.main_my_report)
+    ImageView myReportBtn;
+    @BindView(R.id.main_volunteer)
+    ImageView volunteerBtn;
 
     static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION=1;
 
@@ -50,6 +49,18 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.main_map)
     public void mapView(ImageView view){
         Intent intent=new Intent(this,ViewReportsOnMapActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.main_volunteer)
+    public void volunteerView(ImageView view){
+        Intent intent=new Intent(this,VolunteerCentreActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.main_my_report)
+    public void myReportView(ImageView b){
+        Intent intent=new Intent(this,MyReportActivity.class);
         startActivity(intent);
     }
 

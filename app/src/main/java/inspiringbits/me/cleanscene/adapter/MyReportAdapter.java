@@ -73,7 +73,7 @@ public class MyReportAdapter extends BaseAdapter {
         timeTxt.setText(reportModelList.get(position).getDate()+" "+reportModelList.get(position).getTime());
         String uris=reportModelList.get(position).getPhoto();
         String fUri=uris.split("\\*")[0];
-        image.setImageURI(Uri.parse(context.getString(R.string.base_url)+"/"+fUri));
+        image.setImageURI(Uri.parse(context.getString(R.string.base_img_url)+"/"+fUri));
         return row;
     }
 

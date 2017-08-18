@@ -121,7 +121,7 @@ public class ReportDetailActivity extends AppCompatActivity {
                 if (urls[i]==""){
                     break;
                 }
-                Uri uri = Uri.parse(ReportDetailActivity.this.getString(R.string.base_url).toString()+"/"+urls[i]);
+                Uri uri = Uri.parse(ReportDetailActivity.this.getString(R.string.base_img_url).toString()+"/"+urls[i]);
                 if (i==0){
                     card1.setVisibility(View.VISIBLE);
                     ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)

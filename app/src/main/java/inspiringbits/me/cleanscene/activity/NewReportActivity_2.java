@@ -129,7 +129,7 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
         final InputStream imageStream = getContentResolver().openInputStream(uri);
         final Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, baos);
         byte[] imageBytes = baos.toByteArray();
         String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         BasicMessage imgMsg=new BasicMessage();

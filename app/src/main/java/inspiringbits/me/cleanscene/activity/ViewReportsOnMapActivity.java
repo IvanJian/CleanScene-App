@@ -168,6 +168,8 @@ public class ViewReportsOnMapActivity extends AppCompatActivity implements OnMap
         @Override
         protected void onPostExecute(List<ReportModel> reportModels) {
             if (reportModels.size()==0){
+                mMapView.setVisibility(View.VISIBLE);
+                pbar.setVisibility(View.GONE);
                 return;
             }
             for (ReportModel report:reportModels){

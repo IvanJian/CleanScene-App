@@ -76,6 +76,9 @@ public class MyReportActivity extends AppCompatActivity {
 
         @Override
         protected List<ReportModel> doInBackground(Void... params) {
+            if (MyReportActivity.this.reportModelList.size()==0){
+                return null;
+            }
             for (ReportModel reportModel:MyReportActivity.this.reportModelList){
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(getString(R.string.base_url))
@@ -84,6 +87,9 @@ public class MyReportActivity extends AppCompatActivity {
                 ReportService reportService=retrofit.create(ReportService.class);
                 try {
                     ReportModel report=reportService.findReportById(reportModel.getReportId().toString()).execute().body();
+                    if (report==null){
+                        continue;
+                    }
                     reportModel.setDate(report.getDate());
                     reportModel.setTime(report.getTime());
                 } catch (IOException e) {

@@ -158,39 +158,6 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
             submitBtn.setEnabled(false);
             UploadPhotoAsync upload=new UploadPhotoAsync(selectedPhotos);
             upload.execute();
-            /*String photosUrl="";
-            try {
-                photosUrl=upload.execute().get();
-            } catch (InterruptedException e) {
-                photosUrl="error";
-            } catch (ExecutionException e) {
-                photosUrl="error";
-            }
-            if (photosUrl.equals("error")){
-                Toast.makeText(this, R.string.photo_uploading_fail,Toast.LENGTH_LONG).show();
-                submitBtn.setEnabled(true);
-                return;
-            }
-            ReportModel reportModel=new ReportModel();
-            if (moreDetailCb.isChecked()){
-                reportModel.setRating(ratingLabel.getText().toString());
-                reportModel.setType(typeSpinner.getSelectedItem().toString());
-                reportModel.setSource(sourceSpinner.getSelectedItem().toString());
-                reportModel.setLatitude(locationMarker.getPosition().latitude);
-                reportModel.setLongitude(locationMarker.getPosition().longitude);
-                reportModel.setDescription(description.getText().toString());
-                reportModel.setPhoto(photosUrl);
-                reportModel.setLocationName("location");
-                reportModel.setHasMoreDetail(true);
-            }else {
-                reportModel.setPhoto(photosUrl);
-                reportModel.setLatitude(locationMarker.getPosition().latitude);
-                reportModel.setLongitude(locationMarker.getPosition().longitude);
-                reportModel.setHasMoreDetail(false);
-            }
-            Gson gson=new Gson();
-            Log.d("reportJson", "onCreate: "+gson.toJson(reportModel));*/
-
         });
     }
 
@@ -344,6 +311,22 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
 
     @Override
     public void onMapReady(GoogleMap map) {
+        map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                locationMarker.setPosition(marker.getPosition());
+            }
+        });
         //check the location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             locationMarker = map.addMarker(new MarkerOptions()

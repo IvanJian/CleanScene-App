@@ -25,6 +25,7 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -106,18 +107,13 @@ public class ReportDetailActivity extends AppCompatActivity {
                 return;
             }
             time.setText(reportModel.getDate()+" "+reportModel.getTime());
-            if (reportModel.getRating()!=""){
+            if (reportModel.isHasMoreDetail()){
                 rating.setText(reportModel.getRating());
-            }
-            if (reportModel.getType()!=""){
                 type.setText(reportModel.getType());
-            }
-            if (reportModel.getSource()!=""){
                 source.setText(reportModel.getSource());
-            }
-            if (reportModel.getDescription()!=""){
                 description.setText(reportModel.getDescription());
             }
+
             String[] urls=reportModel.getPhoto().split("\\*");
             for (int i=0;i<urls.length;i++){
                 if (urls[i]==""){

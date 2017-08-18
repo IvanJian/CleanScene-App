@@ -1,5 +1,7 @@
 package inspiringbits.me.cleanscene.rest_service;
 
+import java.util.List;
+
 import inspiringbits.me.cleanscene.model.BasicMessage;
 import inspiringbits.me.cleanscene.model.ReportModel;
 import retrofit2.Call;
@@ -18,4 +20,7 @@ public interface ReportService {
 
     @GET("report/{id}")
     Call<ReportModel> findReportById(@Path("id")String id);
+
+    @GET("report/all")
+    Call<List<ReportModel>> getAllReort();
 }

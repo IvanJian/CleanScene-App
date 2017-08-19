@@ -9,7 +9,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import java.util.List;
 
@@ -73,7 +78,15 @@ public class MyReportAdapter extends BaseAdapter {
         timeTxt.setText(reportModelList.get(position).getDate()+" "+reportModelList.get(position).getTime());
         String uris=reportModelList.get(position).getPhoto();
         String fUri=uris.split("\\*")[0];
-        image.setImageURI(Uri.parse(context.getString(R.string.base_img_url)+"/"+fUri));
+        ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(context.getString(R.string.base_img_url)+"/"+fUri))
+                .setProgressiveRenderingEnabled(true)
+                .setResizeOptions(new ResizeOptions(170,170))
+                .build();
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setImageRequest(request)
+                .setOldController(image.getController())
+                .build();
+        image.setController(controller);
         return row;
     }
 

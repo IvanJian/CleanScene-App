@@ -20,6 +20,7 @@ import com.facebook.cache.common.SimpleCacheKey;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
@@ -126,6 +127,7 @@ public class ReportDetailActivity extends AppCompatActivity {
                     card1.setVisibility(View.VISIBLE);
                     ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
                             .setProgressiveRenderingEnabled(true)
+                            .setResizeOptions(new ResizeOptions(400,210))
                             .build();
                     DraweeController controller = Fresco.newDraweeControllerBuilder()
                             .setImageRequest(request)
@@ -141,6 +143,7 @@ public class ReportDetailActivity extends AppCompatActivity {
                     card2.setVisibility(View.VISIBLE);
                     ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
                             .setProgressiveRenderingEnabled(true)
+                            .setResizeOptions(new ResizeOptions(400,210))
                             .build();
                     DraweeController controller = Fresco.newDraweeControllerBuilder()
                             .setImageRequest(request)
@@ -156,6 +159,7 @@ public class ReportDetailActivity extends AppCompatActivity {
                     card3.setVisibility(View.VISIBLE);
                     ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
                             .setProgressiveRenderingEnabled(true)
+                            .setResizeOptions(new ResizeOptions(400,210))
                             .build();
                     DraweeController controller = Fresco.newDraweeControllerBuilder()
                             .setImageRequest(request)

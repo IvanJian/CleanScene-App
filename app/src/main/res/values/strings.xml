@@ -27,8 +27,10 @@
     <string name="report_map_title">Historical Reports</string>
     <string name="base_url">http://45.55.148.250:8080</string>
     <string name="base_img_url">http://45.55.148.250</string>
+    <string name="dead_animal">Dead Animals</string>
     <string-array name="pollution_type">
         <item>@string/litter</item>
+        <item>@string/dead_animal</item>
         <item>@string/oil</item>
         <item>@string/other</item>
     </string-array>

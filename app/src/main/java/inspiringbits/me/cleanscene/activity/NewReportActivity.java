@@ -50,6 +50,10 @@ import inspiringbits.me.cleanscene.model.ReportModel;
 import inspiringbits.me.cleanscene.view.NestedMapView;
 import inspiringbits.me.cleanscene.R;
 
+
+/**
+ * NOT IN USE
+ */
 public class NewReportActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     static final int RESULT_LOAD_IMG = 1;

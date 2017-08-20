@@ -14,9 +14,12 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
@@ -34,7 +37,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -48,9 +56,12 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -67,8 +78,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NewReportActivity_2 extends AppCompatActivity implements OnMapReadyCallback {
 
     static final int RESULT_LOAD_IMG = 1;
+    static final int RESULT_CAMERA = 0;
     static final int MY_PERMISSIONS_REQUEST_STORAGE = 2;
+    static final int MY_PERMISSIONS_REQUEST_CAMERA = 2;
     static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
+    String mCurrentPhotoPath;
     @BindView(R.id.new_report_pollution_type_spinner)
     Spinner typeSpinner;
     @BindView(R.id.new_report_rating_bar)
@@ -109,6 +123,7 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
     FusedLocationProviderClient mFusedLocationClient;
     List<Uri> selectedPhotos=new ArrayList<Uri>();
     static final String MY_REPORT="my_report";
+    private Uri file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +137,44 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
         changeRatingText();
         photoSelection();
         submitReport();
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.android.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, RESULT_CAMERA);
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     private BasicMessage uploadPhoto(int index) throws IOException {
@@ -177,20 +230,65 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
         locationMap.onCreate(mapViewBundle);
         locationMap.getMapAsync(this);
     }
+    private File getOutputMediaFile(){
 
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                + "/Android/data/"
+                + getApplicationContext().getPackageName()
+                + "/Files");
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());
+        File mediaFile;
+        String mImageName="MI_"+ timeStamp +".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+        return mediaFile;
+    }
     private void photoSelection() {
         addPhotoImg.setOnClickListener(v -> {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},MY_PERMISSIONS_REQUEST_STORAGE);
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.CAMERA},MY_PERMISSIONS_REQUEST_STORAGE);
+                return;
+            }
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA},RESULT_CAMERA);
                 return;
             }
             if (selectedPhotos.size()==3){
                 v.setVisibility(View.GONE);
                 return;
             }
-            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+
+            AlertDialog.Builder adb = new AlertDialog.Builder(this);
+            CharSequence items[] = new CharSequence[] {"Gallery","Camera" };
+            adb.setItems(items, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface d, int n) {
+                    if (n==0){
+                        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                        photoPickerIntent.setType("image/*");
+                        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+                    } else if (n==1){
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        file = FileProvider.getUriForFile(NewReportActivity_2.this, "me.inspiringbits", getOutputMediaFile());
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, file);
+
+                        startActivityForResult(intent, RESULT_CAMERA);
+                    }
+                }
+
+            });
+            adb.setNegativeButton("Cancel", null);
+            adb.setTitle("Upload Photo");
+            adb.show();
+
+            /*Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
             photoPickerIntent.setType("image/*");
-            startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+            startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);*/
         });
         photo1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -239,19 +337,35 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_STORAGE: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                    photoPickerIntent.setType("image/*");
-                    startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
-                } else {
-                    Toast.makeText(this, R.string.access_storage_permission,Toast.LENGTH_LONG).show();
+        if (grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            AlertDialog.Builder adb = new AlertDialog.Builder(this);
+            CharSequence items[] = new CharSequence[] {"Gallery","Camera" };
+            adb.setItems(items, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface d, int n) {
+                    if (n==0){
+                        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                        photoPickerIntent.setType("image/*");
+                        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+                    } else if (n==1){
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        file = FileProvider.getUriForFile(NewReportActivity_2.this, "me.inspiringbits", getOutputMediaFile());
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, file);
+
+                        startActivityForResult(intent, RESULT_CAMERA);
+                    }
                 }
-                return;
-            }
+
+            });
+            adb.setNegativeButton("Cancel", null);
+            adb.setTitle("Upload Photo");
+            adb.show();
+        } else {
+            Toast.makeText(this, R.string.access_storage_permission,Toast.LENGTH_LONG).show();
         }
+
     }
 
     @Override
@@ -281,6 +395,55 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
                         Toast.makeText(this,R.string.image_limit,Toast.LENGTH_LONG).show();
                     }
                     break;
+                case RESULT_CAMERA:
+                    if (resultCode==RESULT_OK) {
+                        Uri cameraImg = file;
+                        Log.d("path", "onActivityResult: " + cameraImg.getPath());
+                        if (selectedPhotos.size() == 0) {
+                            selectedPhotos.add(cameraImg);
+                            photo1.setVisibility(View.VISIBLE);
+                            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(cameraImg)
+                                    .setProgressiveRenderingEnabled(true)
+                                    .setResizeOptions(new ResizeOptions(170,170))
+                                    .build();
+                            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                                    .setImageRequest(request)
+                                    .setOldController(photo1.getController())
+                                    .build();
+                            photo1.setController(controller);
+                            break;
+                        } else if (selectedPhotos.size() == 1) {
+                            selectedPhotos.add(cameraImg);
+                            photo2.setVisibility(View.VISIBLE);
+                            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(cameraImg)
+                                    .setProgressiveRenderingEnabled(true)
+                                    .setResizeOptions(new ResizeOptions(170,170))
+                                    .build();
+                            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                                    .setImageRequest(request)
+                                    .setOldController(photo2.getController())
+                                    .build();
+                            photo2.setController(controller);
+                            break;
+                        } else if (selectedPhotos.size() == 2) {
+                            selectedPhotos.add(cameraImg);
+                            photo3.setVisibility(View.VISIBLE);
+                            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(cameraImg)
+                                    .setProgressiveRenderingEnabled(true)
+                                    .setResizeOptions(new ResizeOptions(170,170))
+                                    .build();
+                            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                                    .setImageRequest(request)
+                                    .setOldController(photo3.getController())
+                                    .build();
+                            photo3.setController(controller);
+                            addPhotoImg.setVisibility(View.GONE);
+                            break;
+                        } else {
+                            Toast.makeText(this, R.string.image_limit, Toast.LENGTH_LONG).show();
+                        }
+                        break;
+                    }
             }
     }
 

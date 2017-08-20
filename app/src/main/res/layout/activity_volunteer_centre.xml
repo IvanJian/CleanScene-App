@@ -19,42 +19,17 @@
 
         <EditText
             android:id="@+id/postcode"
-            android:layout_width="110dp"
-            android:layout_height="wrap_content"
+            android:layout_width="181dp"
+            android:layout_height="42dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
-            android:ems="10"
+            android:maxLength="4"
             android:hint="Postcode"
             android:inputType="number"
-            android:maxEms="4"
             android:maxLines="1"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/find_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:layout_marginLeft="32dp"
-            android:layout_marginTop="8dp"
-            android:text="Find"
-            app:layout_constraintBottom_toBottomOf="@+id/postcode"
-            app:layout_constraintLeft_toRightOf="@+id/postcode"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/display_all_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
-            android:text="All"
-            app:layout_constraintBottom_toBottomOf="@+id/find_btn"
-            app:layout_constraintLeft_toRightOf="@+id/find_btn"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
     </android.support.constraint.ConstraintLayout>
 
     <ListView

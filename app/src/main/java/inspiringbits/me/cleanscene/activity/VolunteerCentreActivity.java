@@ -1,6 +1,9 @@
 package inspiringbits.me.cleanscene.activity;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +14,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.githang.statusbar.StatusBarCompat;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -43,6 +47,9 @@ public class VolunteerCentreActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_volunteer_centre);
+        android.support.v7.app.ActionBar bar = getSupportActionBar();
+        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5E97DC")));
+        StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this,R.color.status_bar));
         ButterKnife.bind(this);
         listView.setVisibility(View.GONE);
         adapter=new VolunteerCentreListAdapter(this,new ArrayList<Volunteer>());

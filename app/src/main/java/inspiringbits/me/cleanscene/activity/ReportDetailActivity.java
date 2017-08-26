@@ -3,8 +3,11 @@ package inspiringbits.me.cleanscene.activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -23,6 +26,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.githang.statusbar.StatusBarCompat;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,6 +79,9 @@ public class ReportDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_detail);
+        android.support.v7.app.ActionBar bar = getSupportActionBar();
+        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5E97DC")));
+        StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this,R.color.status_bar));
         ButterKnife.bind(this);
         scrollView.setVisibility(View.GONE);
         reportId=getIntent().getStringExtra("reportId");

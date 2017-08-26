@@ -20,8 +20,33 @@ public class ReportModel {
     private String deviceId;
     private String date;
     private String time;
+    private String status;
+    private String closeDate;
+    private String closeTime;
 
+    public String getStatus() {
+        return status;
+    }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getCloseDate() {
+        return closeDate;
+    }
+
+    public void setCloseDate(String closeDate) {
+        this.closeDate = closeDate;
+    }
+
+    public String getCloseTime() {
+        return closeTime;
+    }
+
+    public void setCloseTime(String closeTime) {
+        this.closeTime = closeTime;
+    }
 
     public ReportModel() {
     }

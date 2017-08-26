@@ -31,7 +31,7 @@ public class LaunchActivity extends Activity {
             }
 
             public void onFinish() {
-                LaunchActivity.this. startActivity(new Intent(LaunchActivity.this,MainActivity.class));
+                LaunchActivity.this. startActivity(new Intent(LaunchActivity.this,MainActivity_2.class));
                 LaunchActivity.this.finish();
             }
         }.start();

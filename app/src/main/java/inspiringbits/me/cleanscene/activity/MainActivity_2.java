@@ -232,9 +232,9 @@ public class MainActivity_2 extends AppCompatActivity
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
-
+            startActivity(new Intent(this,ProfileActivity.class));
         } else if (id == R.id.nav_send) {
-
+            startActivity(new Intent(this,VolunteeringDetailActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

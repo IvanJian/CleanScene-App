@@ -11,4 +11,8 @@ public class FacebookTool {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         return accessToken != null;
     }
+
+    public static String getIconUrl(String id){
+        return "http://graph.facebook.com/"+id+"/picture?type=small";
+    }
 }

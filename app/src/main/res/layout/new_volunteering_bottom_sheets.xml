@@ -109,20 +109,11 @@
                             android:id="@+id/event_date"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:clickable="true"
+                            android:editable="false"
                             android:hint="Event Date*" />
                     </android.support.design.widget.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="16dp">
-
-                        <EditText
-                            android:id="@+id/meeting_point"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Meeting Point*" />
-                    </android.support.design.widget.TextInputLayout>
 
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
@@ -133,6 +124,8 @@
                             android:id="@+id/start_time"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:clickable="true"
+                            android:editable="false"
                             android:hint="Start Time*" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -145,40 +138,32 @@
                             android:id="@+id/end_time"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:clickable="true"
+                            android:editable="false"
                             android:hint="End Time*" />
                     </android.support.design.widget.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+
+                    <CheckBox
+                        android:id="@+id/is_private"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="16dp">
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_weight="1"
+                        android:padding="16dp"
+                        android:text="Private (Only by invitation)" />
 
-                        <EditText
-                            android:id="@+id/description"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Description" />
+                    <Button
+                        android:id="@+id/submit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        android:layout_weight="1"
+                        android:background="@color/material_blue"
+                        android:text="Submit"
+                        android:textColor="@color/cardview_light_background" />
 
-                        <CheckBox
-                            android:id="@+id/is_private"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:layout_weight="1"
-                            android:padding="16dp"
-                            android:text="Private (Only by invitation)" />
-
-                        <Button
-                            android:id="@+id/submit"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:layout_weight="1"
-                            android:background="@color/material_blue"
-                            android:text="Submit"
-                            android:textColor="@color/cardview_light_background" />
-
-                    </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
         </android.support.constraint.ConstraintLayout>

@@ -7,20 +7,22 @@ import java.util.List;
  */
 
 public class VolunteeringActivity {
+    public static final String STATUS_CLOSE = "close";
+    public static final String STATUS_OPEN="open";
     private Integer volunteeringActivityId;
     private Double latitude;
     private Double longitude;
-    private String meetingPoint;
+    private String address;
     private String createdDate;
     private String createdTime;
     private String activityDate;
     private String fromTime;
     private String toTime;
-    private String description;
     private Boolean isPrivate;
     private List<User> members;
-    private User createdBy;
     private String status;
+    private int anonymousMember;
+
 
     public Integer getVolunteeringActivityId() {
         return volunteeringActivityId;
@@ -28,6 +30,14 @@ public class VolunteeringActivity {
 
     public void setVolunteeringActivityId(Integer volunteeringActivityId) {
         this.volunteeringActivityId = volunteeringActivityId;
+    }
+
+    public int getAnonymousMember() {
+        return anonymousMember;
+    }
+
+    public void setAnonymousMember(int anonymousMember) {
+        this.anonymousMember = anonymousMember;
     }
 
     public Double getLatitude() {
@@ -46,12 +56,12 @@ public class VolunteeringActivity {
         this.longitude = longitude;
     }
 
-    public String getMeetingPoint() {
-        return meetingPoint;
+    public String getAddress() {
+        return address;
     }
 
-    public void setMeetingPoint(String meetingPoint) {
-        this.meetingPoint = meetingPoint;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getCreatedDate() {
@@ -94,19 +104,7 @@ public class VolunteeringActivity {
         this.toTime = toTime;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Boolean getPrivate() {
-        return isPrivate;
-    }
-
-    public Boolean isPrivate() {
         return isPrivate;
     }
 
@@ -120,14 +118,6 @@ public class VolunteeringActivity {
 
     public void setMembers(List<User> members) {
         this.members = members;
-    }
-
-    public User getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(User createdBy) {
-        this.createdBy = createdBy;
     }
 
     public String getStatus() {

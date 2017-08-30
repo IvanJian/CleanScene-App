@@ -23,7 +23,7 @@
             android:text="Address" />
 
         <TextView
-            android:id="@+id/textView24"
+            android:id="@+id/address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
@@ -46,7 +46,7 @@
             android:text="Date" />
 
         <TextView
-            android:id="@+id/textView28"
+            android:id="@+id/date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
@@ -68,6 +68,7 @@
             android:text="Time" />
 
         <TextView
+            android:id="@+id/time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
@@ -85,35 +86,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
-            android:text="Meeting Point" />
+            android:text="Status" />
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:paddingTop="5dp"
-            android:text="Clayton trains station"
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#e1e6ef" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="Description" />
-
-        <TextView
+            android:id="@+id/status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
             android:paddingRight="8dp"
             android:paddingTop="5dp"
-            android:text="Volunteering Australia is strongly opposed to the proposed amendment in Schedule 9 of the Social Services Legislation Amendment (Welfare Reform) Bill 2017, that is aimed at strengthening the employment focus of Mutual Obligations for job seekers aged 55 to 59 from 20 September 2018."
+            android:text="Open"
             android:textColor="@android:color/black"
             android:textSize="14sp" />
 
@@ -147,7 +129,7 @@
             android:text="Invitation Link" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/invitation_link"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
@@ -158,7 +140,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/copy_link"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
@@ -175,7 +157,7 @@
             android:background="#e1e6ef" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/drop_out"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"

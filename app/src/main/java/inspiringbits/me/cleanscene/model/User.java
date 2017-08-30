@@ -7,18 +7,16 @@ package inspiringbits.me.cleanscene.model;
 public class User {
     private Integer userId;
     private String facebookId;
-    private String name;
+    private String fullname;
     private String email;
     private String gender;
-    private String registerDate;
-    private String registerTime;
 
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
@@ -30,12 +28,12 @@ public class User {
         this.facebookId = facebookId;
     }
 
-    public String getName() {
-        return name;
+    public String getFullname() {
+        return fullname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 
     public String getEmail() {
@@ -52,21 +50,5 @@ public class User {
 
     public void setGender(String gender) {
         this.gender = gender;
-    }
-
-    public String getRegisterDate() {
-        return registerDate;
-    }
-
-    public void setRegisterDate(String registerDate) {
-        this.registerDate = registerDate;
-    }
-
-    public String getRegisterTime() {
-        return registerTime;
-    }
-
-    public void setRegisterTime(String registerTime) {
-        this.registerTime = registerTime;
     }
 }

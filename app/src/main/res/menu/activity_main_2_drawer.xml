@@ -1,35 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="none">
-        <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="New Report" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
-    </group>
-
-    <item android:title="Communicate">
+    <item android:title="Report">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/nav_new_report"
+                android:title="New Report" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_my_reports"
+                android:title="My Reports" />
+            <item android:id="@+id/nav_report_map"
+                android:title="All Reports"/>
+        </menu>
+    </item>
+
+    <item android:title="Volunteer">
+        <menu>
+            <item
+                android:id="@+id/nav_new_volunteer"
+                android:title="Create Activity" />
+            <item
+                android:id="@+id/nav_my_volunteer"
+                android:title="My Activities" />
+            <item
+                android:id="@+id/nav_find_volunteer"
+                android:title="Find Activities" />
+            <item
+                android:id="@+id/nav_volunteer_centre"
+                android:title="Volunteer Centre" />
         </menu>
     </item>
 

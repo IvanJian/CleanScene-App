@@ -49,7 +49,7 @@ public class MyReportActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_report);
-        ActionBar bar = getActionBar();
+        android.support.v7.app.ActionBar bar = getSupportActionBar();
         bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5E97DC")));
         StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this,R.color.status_bar));
         ButterKnife.bind(this);

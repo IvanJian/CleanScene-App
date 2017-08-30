@@ -1,6 +1,8 @@
 package inspiringbits.me.cleanscene.activity;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -19,8 +21,10 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.githang.statusbar.StatusBarCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -33,6 +37,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -40,6 +46,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import inspiringbits.me.cleanscene.R;
+import inspiringbits.me.cleanscene.tool.DateTimeTool;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
@@ -66,14 +73,10 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
     BottomSheetBehavior bsb;
     @BindView(R.id.event_date)
     EditText eventDate;
-    @BindView(R.id.meeting_point)
-    EditText meetingPoint;
     @BindView(R.id.start_time)
     EditText startTime;
     @BindView(R.id.end_time)
     EditText endTime;
-    @BindView(R.id.description)
-    EditText description;
     @BindView(R.id.is_private)
     CheckBox isPrivate;
     @BindView(R.id.submit)
@@ -88,6 +91,54 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
         }
     }
 
+    private void setDateTimePickerDialog(){
+        Calendar myCalendar = Calendar.getInstance();
+        DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, monthOfYear);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            SimpleDateFormat sdf = new SimpleDateFormat(DateTimeTool.DATE_FORMAT);
+            eventDate.setText(sdf.format(myCalendar.getTime()));
+        };
+        eventDate.setOnClickListener(v -> new DatePickerDialog(NewVolunteeringActivity.this, date, myCalendar
+                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show());
+        startTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(NewVolunteeringActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        startTime.setText( selectedHour + ":" + selectedMinute);
+                    }
+                }, hour, minute, true);//Yes 24 hour time
+                mTimePicker.setTitle("Start Time");
+                mTimePicker.show();
+            }
+        });
+        endTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(NewVolunteeringActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        endTime.setText( selectedHour + ":" + selectedMinute);
+                    }
+                }, hour, minute, true);//Yes 24 hour time
+                mTimePicker.setTitle("End Time");
+                mTimePicker.show();
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +147,7 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
         bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5E97DC")));
         StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this, R.color.status_bar));
         ButterKnife.bind(this);
+        setDateTimePickerDialog();
 
         bsb = BottomSheetBehavior.from(findViewById(R.id.design_bottom_sheet));
         bsb.setState(BottomSheetBehavior.STATE_HIDDEN);
@@ -206,16 +258,6 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
 
                     }
                 });
-                /*String address = getLocationInformation(latLng);
-                if (address.equals("Unknown Address")) {
-                    address2.setText("Unknown");
-                    address1.setText("Unknown");
-                } else {
-                    String[] addr = address.split(",");
-                    address1.setText(addr[0]);
-                    address2.setText(addr[1]);
-                }
-                bsb.setState(BottomSheetBehavior.STATE_COLLAPSED);*/
             }
         });
     }
@@ -229,9 +271,7 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
                 return "Unknown Address";
             } else {
                 if (addresses.size() > 0) {
-                    //String[] addr = addresses.get(0).getAddressLine(0).split(",");
                     return addresses.get(0).getAddressLine(0);
-                    //return addresses.get(0).getFeatureName() + ", " +addresses.get(0).getThoroughfare()+", "+ addresses.get(0).getLocality() +", " + addresses.get(0).getAdminArea();
                 }
             }
         } catch (Exception e) {

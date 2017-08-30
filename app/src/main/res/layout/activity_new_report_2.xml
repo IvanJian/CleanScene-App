@@ -144,7 +144,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/new_report_more_detail_cb">
 
                 <TextView
-                    android:id="@+id/textView4"
+                    android:id="@+id/invitation_link"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
@@ -168,7 +168,7 @@
                     android:rating="1"
                     android:stepSize="1"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView4" />
+                    app:layout_constraintTop_toBottomOf="@+id/invitation_link" />
 
                 <TextView
                     android:id="@+id/rating_label"

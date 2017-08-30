@@ -1,9 +1,11 @@
 package inspiringbits.me.cleanscene.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
@@ -31,8 +33,10 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.githang.statusbar.StatusBarCompat;
+import com.google.gson.Gson;
 import com.tr4android.support.extension.widget.FloatingActionMenu;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
@@ -42,13 +46,28 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import inspiringbits.me.cleanscene.R;
 import inspiringbits.me.cleanscene.adapter.TimelineAdapter;
+import inspiringbits.me.cleanscene.model.BasicMessage;
+import inspiringbits.me.cleanscene.model.FacebookUserProfile;
 import inspiringbits.me.cleanscene.model.TimelineElement;
+import inspiringbits.me.cleanscene.model.User;
+import inspiringbits.me.cleanscene.rest_service.ReportService;
+import inspiringbits.me.cleanscene.rest_service.UserService;
 import inspiringbits.me.cleanscene.tool.FacebookTool;
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity_2 extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final String USER_ID = "userId";
     @BindView(R.id.main_fam)
     FloatingActionMenu floatingActionMenu;
     @BindView(R.id.main_new_report_fab)
@@ -99,7 +118,18 @@ public class MainActivity_2 extends AppCompatActivity
                             @Override
                             public void onCompleted(JSONObject object, GraphResponse response) {
                                 Log.d("res", "onCompleted: "+response.toString());
-
+                                User user=new User();
+                                try {
+                                    user.setGender(object.getString("gender"));
+                                    user.setEmail(object.getString("email"));
+                                    user.setFacebookId(object.getString("id"));
+                                    user.setFullname(object.getString("name"));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                if (user.getFacebookId()!=null){
+                                    loadUser(user);
+                                }
                             }
                         });
                 Bundle parameters = new Bundle();
@@ -133,6 +163,10 @@ public class MainActivity_2 extends AppCompatActivity
         name=(TextView)navigationView.getHeaderView(0).findViewById(R.id.nav_header_name);
         SimpleDraweeView navHeaderPhoto=(SimpleDraweeView)navigationView.getHeaderView(0).findViewById(R.id.nav_header_photo);
         if(currentProfile == null){
+            SharedPreferences sp=PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor=sp.edit();
+            editor.putString(this.USER_ID,"");
+            editor.apply();
             name.setText("Login with Facebook");
             Uri uri = new Uri.Builder()
                     .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
@@ -179,7 +213,7 @@ public class MainActivity_2 extends AppCompatActivity
         }
         for (int i=0;i<5;i++){
             TimelineElement element=new TimelineElement();
-            element.setTitle("Report added");
+            element.setTitle("Upcoming Volunteer Activity");
             element.setTime("2017-08-02 10AM-12PM");
             element.setLocation("Moniton Beach");
             element.setType(TimelineElement.TIMELINE_TYPE_VOLUNTEER_ACTIVITY);
@@ -199,6 +233,49 @@ public class MainActivity_2 extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void loadUser(User user){
+        Observable.create((ObservableOnSubscribe<String>) e -> {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(getString(R.string.base_url))
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            UserService userService=retrofit.create(UserService.class);
+            BasicMessage message=userService.loadUser(user).execute().body();
+            Log.d("load", "loadUser: "+message.getContent());
+            if (message.getStatus()){
+                e.onNext(message.getContent());
+            }
+            e.onComplete();
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Observer<String>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull String userId) {
+                Log.d("userId", "onNext: "+userId);
+                SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(MainActivity_2.this);
+                SharedPreferences.Editor editor=sharedPreferences.edit();
+                editor.putString(MainActivity_2.USER_ID,userId);
+                editor.apply();
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
     }
 
 
@@ -223,18 +300,20 @@ public class MainActivity_2 extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-            startActivity(new Intent(this,ProfileActivity.class));
-        } else if (id == R.id.nav_send) {
+        if (id == R.id.nav_new_report) {
+            startActivity(new Intent(this,NewReportActivity_2.class));
+        } else if (id == R.id.nav_my_reports) {
+            startActivity(new Intent(this,MyReportActivity.class));
+        } else if (id == R.id.nav_report_map) {
+            startActivity(new Intent(this,ViewReportsOnMapActivity.class));
+        } else if (id == R.id.nav_new_volunteer) {
+            startActivity(new Intent(this, NewVolunteeringActivity.class));
+        } else if (id == R.id.nav_my_volunteer) {
             startActivity(new Intent(this,VolunteeringDetailActivity.class));
+        } else if (id == R.id.nav_find_volunteer) {
+            startActivity(new Intent(this,FindVolunteeringActivity.class));
+        } else if (id == R.id.nav_volunteer_centre){
+            startActivity(new Intent(this,VolunteerCentreActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -21,7 +21,7 @@ public class VolunteeringActivity {
     private Boolean isPrivate;
     private List<User> members;
     private String status;
-    private int anonymousMember;
+    private Integer anonymousMember;
 
 
     public Integer getVolunteeringActivityId() {
@@ -32,11 +32,19 @@ public class VolunteeringActivity {
         this.volunteeringActivityId = volunteeringActivityId;
     }
 
-    public int getAnonymousMember() {
+    public Boolean getIsPrivate() {
+        return isPrivate;
+    }
+
+    public void setIsPrivate(Boolean aPrivate) {
+        isPrivate = aPrivate;
+    }
+
+    public Integer getAnonymousMember() {
         return anonymousMember;
     }
 
-    public void setAnonymousMember(int anonymousMember) {
+    public void setAnonymousMember(Integer anonymousMember) {
         this.anonymousMember = anonymousMember;
     }
 

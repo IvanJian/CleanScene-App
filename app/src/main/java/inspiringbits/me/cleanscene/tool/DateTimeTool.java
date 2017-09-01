@@ -13,9 +13,9 @@ public class DateTimeTool {
     public static final String TIME_FORMAT="HH:mm:ss";
     public static final String DATE_TIME_FORMAT="yyyy-MM-dd HH:mm:ss";
     public static final String TIME_ZONE="GMT+10";
-    private static final String BEFORE = "before";
-    private static final String EQUAL = "equal";
-    private static final String AFTER = "after";
+    public static final String BEFORE = "before";
+    public static final String EQUAL = "equal";
+    public static final String AFTER = "after";
 
     public static String getCurrentDate(){
         SimpleDateFormat sdfd = new SimpleDateFormat(DATE_FORMAT);

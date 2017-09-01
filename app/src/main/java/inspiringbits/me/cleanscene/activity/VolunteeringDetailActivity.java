@@ -1,16 +1,24 @@
 package inspiringbits.me.cleanscene.activity;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,17 +28,21 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import inspiringbits.me.cleanscene.R;
-import inspiringbits.me.cleanscene.adapter.MemberDummyAdapter;
+import inspiringbits.me.cleanscene.adapter.MemberAdapter;
 import inspiringbits.me.cleanscene.model.BasicMessage;
-import inspiringbits.me.cleanscene.rest_service.UserService;
+import inspiringbits.me.cleanscene.model.VolunteeringActivity;
 import inspiringbits.me.cleanscene.rest_service.VolunteerService;
 import inspiringbits.me.cleanscene.tool.FacebookTool;
-import inspiringbits.me.cleanscene.tool.RestServiceTool;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
@@ -45,7 +57,7 @@ public class VolunteeringDetailActivity extends AppCompatActivity implements OnM
 
 
     private static final String MAPVIEW_BUNDLE_KEY = "VolunteeringDetail";
-    private static final String VOLUNTEERING_ACTIVITY_ID = "vid";
+    public static final String VOLUNTEERING_ACTIVITY_ID = "vid";
     @BindView(R.id.location_map)
     MapView locationMap;
     @BindView(R.id.members)
@@ -67,6 +79,23 @@ public class VolunteeringDetailActivity extends AppCompatActivity implements OnM
     @BindView(R.id.join_fab)
     FloatingActionButton joinFab;
     String volunteeringActivityId;
+    GoogleMap googleMap;
+    MemberAdapter adapter;
+    @BindView(R.id.anonymousm_member)
+    TextView anonymousmMember;
+    String aId;
+    @BindView(R.id.parentLayout)
+    CoordinatorLayout parentLayout;
+    @BindView(R.id.app_bar)
+    AppBarLayout appBar;
+    @BindView(R.id.content)
+    View contentScroll;
+    @BindView(R.id.toolbar_layout)
+    CollapsingToolbarLayout toolbarLayout;
+    @BindView(R.id.mask)
+    ImageView mask;
+    @BindView(R.id.hint)
+    TextView hint;
 
     private void initMap(Bundle savedInstanceState) {
         Bundle mapViewBundle = null;
@@ -77,25 +106,90 @@ public class VolunteeringDetailActivity extends AppCompatActivity implements OnM
         locationMap.getMapAsync(VolunteeringDetailActivity.this);
     }
 
+    private void loadActivityDetail(String aId) {
+        Observable.create((ObservableOnSubscribe<VolunteeringActivity>) e -> {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(getString(R.string.base_url))
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            VolunteerService service = retrofit.create(VolunteerService.class);
+            VolunteeringActivity volunteeringActivity = service.getActivityById(aId).execute().body();
+            Gson gson = new Gson();
+            Log.d("ac", "loadActivityDetail: " + gson.toJson(volunteeringActivity));
+            e.onNext(volunteeringActivity);
+            e.onComplete();
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<VolunteeringActivity>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull VolunteeringActivity volunteeringActivity) {
+                        if (volunteeringActivity == null) {
+                            return;
+                        }
+                        googleMap.addMarker(new MarkerOptions().position(new LatLng(volunteeringActivity.getLatitude(), volunteeringActivity.getLongitude())));
+                        googleMap.moveCamera(CameraUpdateFactory.zoomTo(14.0f));
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(volunteeringActivity.getLatitude(), volunteeringActivity.getLongitude())));
+                        address.setText(volunteeringActivity.getAddress());
+                        date.setText(volunteeringActivity.getActivityDate());
+                        time.setText(volunteeringActivity.getFromTime() + " - " + volunteeringActivity.getToTime());
+                        status.setText(volunteeringActivity.getStatus());
+                        Log.d("member", "onNext: " + volunteeringActivity.getMembers().size());
+                        adapter = new MemberAdapter(volunteeringActivity.getMembers(), VolunteeringDetailActivity.this);
+                        members.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                        Gson gson = new Gson();
+                        Log.d("va", "onNext: " + volunteeringActivity.getAnonymousMember());
+                        anonymousmMember.setText("Anonymous Member: " + String.valueOf(volunteeringActivity.getAnonymousMember()));
+                        mask.setVisibility(View.GONE);
+                        hint.setVisibility(View.GONE);
+                        /*progressBar.setVisibility(View.GONE);
+                        contentScroll.setVisibility(View.VISIBLE);
+                        joinFab.setVisibility(View.VISIBLE);*/
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_volunteering_detail);
         ButterKnife.bind(this);
+        //parentLayout.setVisibility(View.GONE);
+        //contentScroll.setVisibility(View.GONE);
+        toolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
+        toolbarLayout.setExpandedTitleColor(Color.BLACK);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         initMap(savedInstanceState);
-        //volunteeringActivityId=getIntent().getStringExtra(this.VOLUNTEERING_ACTIVITY_ID);
-        loadVolunteerInformation();
-        /**
-         * TEST
-         */
-        members.setAdapter(new MemberDummyAdapter(this));
+        String activityId= null;
+        try {
+            activityId = getIntent().getData().getQueryParameter("activity_id");
+        } catch (Exception e) {
+        }
+        if (activityId!=""){
+            loadActivityDetail(activityId);
+            return;
+        }
+        volunteeringActivityId = getIntent().getStringExtra(this.VOLUNTEERING_ACTIVITY_ID);
+        loadActivityDetail(volunteeringActivityId);
     }
 
-    private void loadVolunteerInformation() {
-        //TODO
-    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -149,12 +243,10 @@ public class VolunteeringDetailActivity extends AppCompatActivity implements OnM
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        VolunteeringDetailActivity.this.googleMap = googleMap;
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-        googleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(-37.821202, 144.957946))
-                .title("Location of Incident"));
-        googleMap.moveCamera(CameraUpdateFactory.zoomTo(14.0f));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(-37.821202, 144.957946)));
+        aId = getIntent().getStringExtra(this.VOLUNTEERING_ACTIVITY_ID);
+        loadActivityDetail(aId);
     }
 
     @OnClick({R.id.copy_link, R.id.drop_out, R.id.join_fab})
@@ -165,53 +257,154 @@ public class VolunteeringDetailActivity extends AppCompatActivity implements OnM
             case R.id.drop_out:
                 break;
             case R.id.join_fab:
-                VolunteerService volunteerService= RestServiceTool.getRetrofit().create(VolunteerService.class);
-
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(getString(R.string.base_url))
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+                VolunteerService volunteerService = retrofit.create(VolunteerService.class);
+                if (FacebookTool.isLoggedIn()) {
                     Observable.create((ObservableOnSubscribe<BasicMessage>) e -> {
-                        if (FacebookTool.isLoggedIn()) {
-                            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(VolunteeringDetailActivity.this);
-                            String userId = sp.getString(MainActivity_2.USER_ID, "");
-                            BasicMessage basicMessage = volunteerService.joinVolunteerActivity(VolunteeringDetailActivity.this.volunteeringActivityId, userId).execute().body();
-                            e.onNext(basicMessage);
-                            e.onComplete();
-                        } else {
-                            //TODO
-                        }
+                        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(VolunteeringDetailActivity.this);
+                        String userId = sp.getString(MainActivity_2.USER_ID, "");
+                        BasicMessage basicMessage = volunteerService.joinVolunteerActivity(VolunteeringDetailActivity.this.volunteeringActivityId, userId).execute().body();
+                        e.onNext(basicMessage);
+                        e.onComplete();
                     })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<BasicMessage>() {
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<BasicMessage>() {
 
-                        @Override
-                        public void onSubscribe(@NonNull Disposable d) {
+                                @Override
+                                public void onSubscribe(@NonNull Disposable d) {
 
-                        }
+                                }
 
-                        @Override
-                        public void onNext(@NonNull BasicMessage basicMessage) {
-                            if (basicMessage.getStatus()){
-                                Toast.makeText(VolunteeringDetailActivity.this,"You have joined this activity!",Toast.LENGTH_LONG).show();
-                                VolunteeringDetailActivity.this.refreshMember();
-                            } else {
-                                Toast.makeText(VolunteeringDetailActivity.this,basicMessage.getContent(),Toast.LENGTH_LONG).show();
+                                @Override
+                                public void onNext(@NonNull BasicMessage basicMessage) {
+                                    if (basicMessage.getStatus()) {
+                                        Toast.makeText(VolunteeringDetailActivity.this, "You have joined this activity!", Toast.LENGTH_LONG).show();
+                                        VolunteeringDetailActivity.this.refreshMember();
+                                    } else {
+                                        Toast.makeText(VolunteeringDetailActivity.this, basicMessage.getContent(), Toast.LENGTH_LONG).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onError(@NonNull Throwable e) {
+
+                                }
+
+                                @Override
+                                public void onComplete() {
+
+                                }
+                            });
+                } else {
+                    //TODO
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                    String vListStr = sharedPreferences.getString(MyVolunteeringActivity.VOLUNTEERING_LIST, "");
+                    Gson gson = new Gson();
+                    List<VolunteeringActivity> vList = gson.fromJson(vListStr, new TypeToken<List<VolunteeringActivity>>() {
+                    }.getType());
+                    if (vList != null && vList.size() != 0) {
+                        for (VolunteeringActivity v : vList) {
+                            if (v.getVolunteeringActivityId().equals(VolunteeringDetailActivity.this.aId)) {
+                                Toast.makeText(this, "You are already a member of this activity.", Toast.LENGTH_SHORT).show();
+                                return;
                             }
                         }
-
-                        @Override
-                        public void onError(@NonNull Throwable e) {
-
-                        }
-
-                        @Override
-                        public void onComplete() {
-
-                        }
-                    });
+                    }
+                    AlertDialog.Builder builder;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+                    } else {
+                        builder = new AlertDialog.Builder(this);
+                    }
+                    builder.setTitle("Join Activity")
+                            .setMessage("Do you want to login?")
+                            .setPositiveButton("Login", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    startActivity(new Intent(VolunteeringDetailActivity.this, LoginActivity.class));
+                                }
+                            })
+                            .setNegativeButton("Keep Me Anonymous", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    anonymousJoin();
+                                }
+                            })
+                            .show();
+                }
                 break;
         }
     }
 
+    private void anonymousJoin() {
+        Observable.create((ObservableOnSubscribe<BasicMessage>) e -> {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(getString(R.string.base_url))
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            VolunteerService volunteerService = retrofit.create(VolunteerService.class);
+            BasicMessage basicMessage = volunteerService.joinVolunteeringActivityAnonymous(Integer.parseInt(VolunteeringDetailActivity.this.aId)).execute().body();
+            e.onNext(basicMessage);
+            e.onComplete();
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<BasicMessage>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull BasicMessage basicMessage) {
+                        if (basicMessage.getStatus()) {
+                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(VolunteeringDetailActivity.this);
+                            String vListStr = sharedPreferences.getString(MyVolunteeringActivity.VOLUNTEERING_LIST, "");
+                            VolunteeringActivity volunteeringActivity = new VolunteeringActivity();
+                            volunteeringActivity.setAddress(address.getText().toString());
+                            volunteeringActivity.setVolunteeringActivityId(Integer.parseInt(VolunteeringDetailActivity.this.aId));
+                            String[] times = time.getText().toString().split("-");
+                            volunteeringActivity.setActivityDate(date.getText().toString());
+                            volunteeringActivity.setFromTime(times[0]);
+                            volunteeringActivity.setToTime(times[1]);
+                            Gson gson = new Gson();
+                            List<VolunteeringActivity> vList = gson.fromJson(vListStr, new TypeToken<List<VolunteeringActivity>>() {
+                            }.getType());
+                            if (vList == null) {
+                                vList = new ArrayList<VolunteeringActivity>();
+                            }
+                            vList.add(volunteeringActivity);
+                            vListStr = gson.toJson(vList);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString(MyVolunteeringActivity.VOLUNTEERING_LIST, vListStr);
+                            editor.apply();
+                            Toast.makeText(VolunteeringDetailActivity.this, "You have joined this activity.", Toast.LENGTH_SHORT).show();
+                            refreshMember();
+                        } else {
+                            Toast.makeText(VolunteeringDetailActivity.this, basicMessage.getContent(), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        e.printStackTrace();
+                        //Toast.makeText(VolunteeringDetailActivity.this, "Network error. Please try later", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     private void refreshMember() {
-        //TODO
+        /*progressBar.setVisibility(View.VISIBLE);
+        contentScroll.setVisibility(View.GONE);
+        joinFab.setVisibility(View.GONE);*/
+        loadActivityDetail(this.aId);
     }
 }

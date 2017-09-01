@@ -1,8 +1,10 @@
 package inspiringbits.me.cleanscene.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,11 +21,24 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.githang.statusbar.StatusBarCompat;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
 
 import inspiringbits.me.cleanscene.R;
+import inspiringbits.me.cleanscene.model.BasicMessage;
+import inspiringbits.me.cleanscene.model.User;
+import inspiringbits.me.cleanscene.rest_service.UserService;
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -53,7 +68,18 @@ public class LoginActivity extends AppCompatActivity {
                         new GraphRequest.GraphJSONObjectCallback() {
                             @Override
                             public void onCompleted(JSONObject object, GraphResponse response) {
-                                Log.d("res", "onCompleted: "+response.toString());
+                                User user=new User();
+                                try {
+                                    user.setGender(object.getString("gender"));
+                                    user.setEmail(object.getString("email"));
+                                    user.setFacebookId(object.getString("id"));
+                                    user.setFullname(object.getString("name"));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                if (user.getFacebookId()!=null){
+                                    loadUser(user);
+                                }
 
                             }
                         });
@@ -73,5 +99,48 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void loadUser(User user){
+        Observable.create((ObservableOnSubscribe<String>) e -> {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(getString(R.string.base_url))
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            UserService userService=retrofit.create(UserService.class);
+            BasicMessage message=userService.loadUser(user).execute().body();
+            Log.d("load", "loadUser: "+message.getContent());
+            if (message.getStatus()){
+                e.onNext(message.getContent());
+            }
+            e.onComplete();
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull String userId) {
+                        Log.d("userId", "onNext: "+userId);
+                        SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+                        SharedPreferences.Editor editor=sharedPreferences.edit();
+                        editor.putString(MainActivity_2.USER_ID,userId);
+                        editor.apply();
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 }

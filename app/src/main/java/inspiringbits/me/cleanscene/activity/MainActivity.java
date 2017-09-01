@@ -1,23 +1,15 @@
 package inspiringbits.me.cleanscene.activity;
 
 import android.Manifest;
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.githang.statusbar.StatusBarCompat;
@@ -29,13 +21,13 @@ import inspiringbits.me.cleanscene.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.main_report)
+    @BindView(R.id.new_report)
     ImageView reportBtn;
-    @BindView(R.id.main_map)
+    @BindView(R.id.report_map)
     ImageView mapBtn;
-    @BindView(R.id.main_my_report)
+    @BindView(R.id.my_report)
     ImageView myReportBtn;
-    @BindView(R.id.main_volunteer)
+    @BindView(R.id.volunteer_menu)
     ImageView volunteerBtn;
 
     static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION=1;
@@ -70,24 +62,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.main_report)
+    @OnClick(R.id.new_report)
     public void newReport(ImageView view){
         startActivity(new Intent(this,NewReportActivity_2.class));
     }
 
-    @OnClick(R.id.main_map)
+    @OnClick(R.id.report_map)
     public void mapView(ImageView view){
         Intent intent=new Intent(this,ViewReportsOnMapActivity.class);
         startActivity(intent);
     }
 
-    @OnClick(R.id.main_volunteer)
+    @OnClick(R.id.volunteer_menu)
     public void volunteerView(ImageView view){
         Intent intent=new Intent(this,VolunteerCentreActivity.class);
         startActivity(intent);
     }
 
-    @OnClick(R.id.main_my_report)
+    @OnClick(R.id.my_report)
     public void myReportView(ImageView b){
         Intent intent=new Intent(this,MyReportActivity.class);
         startActivity(intent);

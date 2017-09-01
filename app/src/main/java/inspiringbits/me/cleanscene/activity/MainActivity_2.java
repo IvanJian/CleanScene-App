@@ -1,13 +1,14 @@
 package inspiringbits.me.cleanscene.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,10 +16,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.CallbackManager;
@@ -33,8 +32,6 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.githang.statusbar.StatusBarCompat;
-import com.google.gson.Gson;
-import com.tr4android.support.extension.widget.FloatingActionMenu;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,12 +42,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import inspiringbits.me.cleanscene.R;
-import inspiringbits.me.cleanscene.adapter.TimelineAdapter;
 import inspiringbits.me.cleanscene.model.BasicMessage;
-import inspiringbits.me.cleanscene.model.FacebookUserProfile;
-import inspiringbits.me.cleanscene.model.TimelineElement;
 import inspiringbits.me.cleanscene.model.User;
-import inspiringbits.me.cleanscene.rest_service.ReportService;
 import inspiringbits.me.cleanscene.rest_service.UserService;
 import inspiringbits.me.cleanscene.tool.FacebookTool;
 import io.reactivex.Observable;
@@ -68,32 +61,46 @@ public class MainActivity_2 extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String USER_ID = "userId";
-    @BindView(R.id.main_fam)
-    FloatingActionMenu floatingActionMenu;
-    @BindView(R.id.main_new_report_fab)
-    FloatingActionButton newReportFab;
-    @BindView(R.id.main_new_volunteering_fab)
-    FloatingActionButton newVolunteeringFab;
-    @BindView(R.id.main_timeline_listview)
-    ListView timelineListView;
-    TimelineAdapter timelineAdapter;
+    @BindView(R.id.new_report)
+    ImageView reportBtn;
+    @BindView(R.id.report_map)
+    ImageView mapBtn;
+    @BindView(R.id.my_report)
+    ImageView myReportBtn;
+    @BindView(R.id.volunteer_menu)
+    ImageView volunteerBtn;
+
+    static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION=1;
+
     NavigationView navigationView;
     LoginButton loginButton;
     CallbackManager callbackManager;
     ProfileTracker profileTracker;
 
 
-    @OnClick(R.id.main_new_volunteering_fab)
-    public void newVolunteeringFabClick(View v){
-        startActivity(new Intent(this,NewVolunteeringActivity.class));
-        floatingActionMenu.collapse();
+    @OnClick(R.id.new_report)
+    public void newReport(ImageView view){
+        startActivity(new Intent(this,NewReportActivity_2.class));
     }
 
-    @OnClick(R.id.main_new_report_fab)
-    public void newReportFabClick(View v){
-        startActivity(new Intent(this,NewReportActivity_2.class));
-        floatingActionMenu.collapse();
+    @OnClick(R.id.report_map)
+    public void mapView(ImageView view){
+        Intent intent=new Intent(this,ViewReportsOnMapActivity.class);
+        startActivity(intent);
     }
+
+    @OnClick(R.id.volunteer_menu)
+    public void volunteerView(ImageView view){
+        Intent intent=new Intent(this,VolunteerMenuActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.my_report)
+    public void myReportView(ImageView b){
+        Intent intent=new Intent(this,MyReportActivity.class);
+        startActivity(intent);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -174,6 +181,10 @@ public class MainActivity_2 extends AppCompatActivity
                     .build();
             navHeaderPhoto.setImageURI(uri);
         } else {
+            String userId=currentProfile.getId();
+            User user=new User();
+            user.setFacebookId(userId);
+            loadUser(user);
             name.setText(currentProfile.getName());
             navHeaderPhoto.setImageURI(currentProfile.getProfilePictureUri(90,90));
         }
@@ -187,7 +198,14 @@ public class MainActivity_2 extends AppCompatActivity
         StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this,R.color.status_bar));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        floatingActionMenu.setupWithDimmingView(findViewById(R.id.dimming_view), Color.parseColor("#99000000"));
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
+
+            return;
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -198,31 +216,6 @@ public class MainActivity_2 extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         login();
-        /**
-         * Test timeline
-         */
-        timelineAdapter=new TimelineAdapter(null,this);
-        timelineListView.setAdapter(timelineAdapter);
-        for (int i=0;i<5;i++){
-            TimelineElement element=new TimelineElement();
-            element.setTitle("Report added");
-            element.setTime("2017-08-02 23:25:14");
-            element.setLocation("Moniton Beach");
-            element.setType(TimelineElement.TIMELINE_TYPE_REPORT);
-            timelineAdapter.addElement(element);
-        }
-        for (int i=0;i<5;i++){
-            TimelineElement element=new TimelineElement();
-            element.setTitle("Upcoming Volunteer Activity");
-            element.setTime("2017-08-02 10AM-12PM");
-            element.setLocation("Moniton Beach");
-            element.setType(TimelineElement.TIMELINE_TYPE_VOLUNTEER_ACTIVITY);
-            timelineAdapter.addElement(element);
-        }
-        timelineAdapter.notifyDataSetChanged();
-        /**
-         * End of test timeline
-         */
     }
 
     @Override

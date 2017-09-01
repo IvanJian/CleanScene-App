@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:fitsSystemWindows="false"
+
     tools:context="inspiringbits.me.cleanscene.activity.VolunteeringDetailActivity">
+
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -20,17 +25,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
+            app:contentScrim="@color/status_bar"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <com.google.android.gms.maps.MapView
+            <com.google.android.gms.maps.MapView xmlns:map="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/location_map"
-                xmlns:map="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                app:layout_collapseMode="parallax"
+                android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
-                map:liteMode="true"
-                android:layout_height="match_parent" />
+                app:layout_collapseMode="parallax"
+                map:liteMode="true" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -44,7 +48,9 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_volunteering_detail" />
+    <include
+        android:id="@+id/content"
+        layout="@layout/content_volunteering_detail" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/join_fab"
@@ -55,5 +61,24 @@
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@drawable/ic_add_white_18dp" />
+
+    <ImageView
+        android:id="@+id/mask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="100dp"
+        app:srcCompat="@android:color/white" />
+
+    <TextView
+        android:id="@+id/hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:elevation="100dp"
+        android:text="Loading"
+        android:textSize="18sp"
+        app:layout_anchor="@+id/mask"
+        app:layout_anchorGravity="center_vertical|center_horizontal" />
+
 
 </android.support.design.widget.CoordinatorLayout>

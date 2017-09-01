@@ -12,7 +12,11 @@ public class FacebookTool {
         return accessToken != null;
     }
 
-    public static String getIconUrl(String id){
+    public static String getSamllIconUrl(String id){
         return "http://graph.facebook.com/"+id+"/picture?type=small";
+    }
+
+    public static String getLargeIconUrl(String id){
+        return "http://graph.facebook.com/"+id+"/picture?type=large";
     }
 }

@@ -8,6 +8,7 @@
     android:padding="8dp">
 
     <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/member_icon"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
@@ -18,7 +19,7 @@
         fresco:roundAsCircle="true" />
 
     <TextView
-        android:id="@+id/textView29"
+        android:id="@+id/member_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ivan Jian" />

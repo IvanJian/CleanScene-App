@@ -108,8 +108,17 @@
         <activity
             android:name=".activity.VolunteeringDetailActivity"
             android:label="@string/title_activity_volunteering_detail"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.ProfileActivity"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <data android:scheme="cleanscene" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.ProfileActivity" />
+        <activity android:name=".activity.VolunteerMenuActivity" />
+        <activity android:name=".activity.MyVolunteeringActivity"></activity>
     </application>
 
 </manifest>

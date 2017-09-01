@@ -24,50 +24,6 @@
     <include
         android:id="@+id/include"
         layout="@layout/content_main_activity_2" />
-    <View
-        android:id="@+id/dimming_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <com.tr4android.support.extension.widget.FloatingActionMenu
-        android:id="@+id/main_fam"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="8dp"
-        app:fabMenuCloseIconAngle="135"
-        app:fabMenuCloseIconSrc="@drawable/ic_add_white_24dp"
-        app:fabMenuLabelStyle="@style/label_style_dark"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
-
-        <android.support.design.widget.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_add_white_24dp"
-            app:backgroundTint="@color/status_bar" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/main_new_report_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="New Report"
-            android:src="@drawable/ic_mode_edit_white_18dp"
-            app:backgroundTint="@color/colorAccent"
-            app:fabSize="mini" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/main_new_volunteering_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="New Volunteering"
-            android:src="@drawable/ic_mode_edit_white_18dp"
-            app:backgroundTint="@color/material_blue"
-            app:fabSize="mini" />
-    </com.tr4android.support.extension.widget.FloatingActionMenu>
-
 
 
 </android.support.design.widget.CoordinatorLayout>

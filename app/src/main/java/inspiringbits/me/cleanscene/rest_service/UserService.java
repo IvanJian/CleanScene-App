@@ -18,4 +18,10 @@ public interface UserService {
 
     @GET("/user/{id}")
     Call<User> getUserById(@Path("id") int id);
+
+    @GET("/user/reports/{id}")
+    Call<BasicMessage> getNumOfReport(@Path("id") String id);
+
+    @GET("/user/activities/{id}")
+    Call<BasicMessage> getNumOfVolunteering(@Path("id") String id);
 }

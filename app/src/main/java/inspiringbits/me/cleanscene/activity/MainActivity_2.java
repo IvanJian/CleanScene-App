@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -32,6 +33,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.githang.statusbar.StatusBarCompat;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,6 +71,7 @@ public class MainActivity_2 extends AppCompatActivity
     ImageView myReportBtn;
     @BindView(R.id.volunteer_menu)
     ImageView volunteerBtn;
+    SimpleDraweeView navHeaderPhoto;
 
     static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION=1;
 
@@ -125,12 +128,14 @@ public class MainActivity_2 extends AppCompatActivity
                             @Override
                             public void onCompleted(JSONObject object, GraphResponse response) {
                                 Log.d("res", "onCompleted: "+response.toString());
+
                                 User user=new User();
                                 try {
-                                    user.setGender(object.getString("gender"));
-                                    user.setEmail(object.getString("email"));
-                                    user.setFacebookId(object.getString("id"));
-                                    user.setFullname(object.getString("name"));
+                                    Log.d("name", "onCompleted: "+response.getJSONObject().getString("name"));
+                                    user.setGender(response.getJSONObject().getString("gender"));
+                                    user.setEmail(response.getJSONObject().getString("email"));
+                                    user.setFacebookId(response.getJSONObject().getString("id"));
+                                    user.setFullname(response.getJSONObject().getString("name"));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -168,7 +173,14 @@ public class MainActivity_2 extends AppCompatActivity
     private void loadingProfile(Profile currentProfile) {
         TextView name;
         name=(TextView)navigationView.getHeaderView(0).findViewById(R.id.nav_header_name);
-        SimpleDraweeView navHeaderPhoto=(SimpleDraweeView)navigationView.getHeaderView(0).findViewById(R.id.nav_header_photo);
+        navHeaderPhoto=(SimpleDraweeView)navigationView.getHeaderView(0).findViewById(R.id.nav_header_photo);
+        navHeaderPhoto.setOnClickListener(v->{
+            if (FacebookTool.isLoggedIn()){
+                Intent intent=new Intent(this,ProfileActivity.class);
+                intent.putExtra(ProfileActivity.USER_ID,Integer.parseInt(FacebookTool.getUserId(this)));
+                startActivity(intent);
+            }
+        });
         if(currentProfile == null){
             SharedPreferences sp=PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor editor=sp.edit();
@@ -181,10 +193,33 @@ public class MainActivity_2 extends AppCompatActivity
                     .build();
             navHeaderPhoto.setImageURI(uri);
         } else {
-            String userId=currentProfile.getId();
-            User user=new User();
-            user.setFacebookId(userId);
-            loadUser(user);
+            GraphRequest request = GraphRequest.newMeRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    new GraphRequest.GraphJSONObjectCallback() {
+                        @Override
+                        public void onCompleted(JSONObject object, GraphResponse response) {
+                            Log.d("res", "onCompleted: "+response.toString());
+
+                            User user=new User();
+                            try {
+                                Log.d("name", "onCompleted: "+response.getJSONObject().getString("name"));
+                                user.setGender(response.getJSONObject().getString("gender"));
+                                user.setEmail(response.getJSONObject().getString("email"));
+                                user.setFacebookId(response.getJSONObject().getString("id"));
+                                user.setFullname(response.getJSONObject().getString("name"));
+                                loadUser(user);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            if (user.getFacebookId()!=null){
+                                loadUser(user);
+                            }
+                        }
+                    });
+            Bundle parameters = new Bundle();
+            parameters.putString("fields", "id,name,email,gender,birthday");
+            request.setParameters(parameters);
+            request.executeAsync();
             name.setText(currentProfile.getName());
             navHeaderPhoto.setImageURI(currentProfile.getProfilePictureUri(90,90));
         }
@@ -229,6 +264,8 @@ public class MainActivity_2 extends AppCompatActivity
     }
 
     private void loadUser(User user){
+        Gson g=new Gson();
+        Log.d("mmb", "loadUser: "+g.toJson(user));
         Observable.create((ObservableOnSubscribe<String>) e -> {
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(getString(R.string.base_url))
@@ -302,11 +339,13 @@ public class MainActivity_2 extends AppCompatActivity
         } else if (id == R.id.nav_new_volunteer) {
             startActivity(new Intent(this, NewVolunteeringActivity.class));
         } else if (id == R.id.nav_my_volunteer) {
-            startActivity(new Intent(this,VolunteeringDetailActivity.class));
+            startActivity(new Intent(this,MyVolunteeringActivity.class));
         } else if (id == R.id.nav_find_volunteer) {
             startActivity(new Intent(this,FindVolunteeringActivity.class));
         } else if (id == R.id.nav_volunteer_centre){
             startActivity(new Intent(this,VolunteerCentreActivity.class));
+        } else if (id == R.id.about_us){
+            startActivity(new Intent(this,AboutUsActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

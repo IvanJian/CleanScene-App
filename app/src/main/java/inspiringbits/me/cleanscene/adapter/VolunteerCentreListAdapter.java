@@ -1,6 +1,8 @@
 package inspiringbits.me.cleanscene.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,6 +72,12 @@ public class VolunteerCentreListAdapter extends BaseAdapter {
         suburb.setText(volunteerList.get(position).getSuburb());
         address.setText(volunteerList.get(position).getAddress());
         zipcode.setText(volunteerList.get(position).getZipcode());
+        row.setOnClickListener(v->{
+            Uri gmmIntentUri = Uri.parse("geo:0,0?q="+volunteerList.get(position).getAddress()+", "+volunteerList.get(position).getSuburb());
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            context.startActivity(mapIntent);
+        });
         return row;
     }
 }

@@ -1,10 +1,15 @@
 package inspiringbits.me.cleanscene.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+
+import com.githang.statusbar.StatusBarCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,6 +30,9 @@ public class VolunteerMenuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        android.support.v7.app.ActionBar bar = getSupportActionBar();
+        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5E97DC")));
+        StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this,R.color.status_bar));
         setContentView(R.layout.activity_volunteer_menu);
         ButterKnife.bind(this);
     }

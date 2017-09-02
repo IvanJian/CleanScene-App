@@ -121,6 +121,8 @@
         <GridView
             android:id="@+id/members"
             android:layout_width="match_parent"
+            android:numColumns="4"
+            android:stretchMode="columnWidth"
             android:layout_height="wrap_content" />
 
         <View

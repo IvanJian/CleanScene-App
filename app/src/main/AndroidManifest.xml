@@ -44,7 +44,7 @@
         <activity
             android:name=".activity.NewReportActivity_2"
             android:label="@string/new_report_title"
-            android:parentActivityName=".activity.MainActivity" />
+            android:parentActivityName=".activity.MainActivity_2" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -53,7 +53,7 @@
         <activity
             android:name=".activity.ViewReportsOnMapActivity"
             android:label="@string/report_map_title"
-            android:parentActivityName=".activity.MainActivity" />
+            android:parentActivityName=".activity.MainActivity_2" />
         <activity
             android:name=".activity.ReportDetailActivity"
             android:label="Incident Report"
@@ -65,12 +65,12 @@
             android:theme="@style/FullscreenTheme" />
         <activity
             android:name=".activity.VolunteerCentreActivity"
-            android:label="Volunteer"
-            android:parentActivityName=".activity.MainActivity" />
+            android:label="Volunteer Centres"
+            android:parentActivityName=".activity.VolunteerMenuActivity" />
         <activity
             android:name=".activity.MyReportActivity"
             android:label="My Reports"
-            android:parentActivityName=".activity.MainActivity" />
+            android:parentActivityName=".activity.MainActivity_2" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -102,23 +102,47 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.LoginActivity" />
-        <activity android:name=".activity.NewVolunteeringActivity" />
-        <activity android:name=".activity.FindVolunteeringActivity" />
+        <activity
+            android:name=".activity.LoginActivity"
+            android:label="Login"
+            android:parentActivityName=".activity.MainActivity_2" />
+        <activity
+            android:name=".activity.NewVolunteeringActivity"
+            android:label="Create Activity"
+            android:parentActivityName=".activity.VolunteerMenuActivity" />
+        <activity
+            android:name=".activity.FindVolunteeringActivity"
+            android:label="Find Activity"
+            android:parentActivityName=".activity.VolunteerMenuActivity" />
         <activity
             android:name=".activity.VolunteeringDetailActivity"
             android:label="@string/title_activity_volunteering_detail"
+            android:parentActivityName=".activity.VolunteerMenuActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <data android:scheme="cleanscene" />
+
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.ProfileActivity" />
-        <activity android:name=".activity.VolunteerMenuActivity" />
-        <activity android:name=".activity.MyVolunteeringActivity"></activity>
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:label="Profile"
+            />
+        <activity
+            android:name=".activity.VolunteerMenuActivity"
+            android:label="Volunteer"
+            android:parentActivityName=".activity.MainActivity_2" />
+        <activity
+            android:name=".activity.MyVolunteeringActivity"
+            android:label="My Volunteer Activity"
+            android:parentActivityName=".activity.VolunteerMenuActivity" />
+        <activity android:name=".activity.AboutUsActivity"
+            android:parentActivityName=".activity.MainActivity_2"
+            android:label="About Us"></activity>
     </application>
 
 </manifest>

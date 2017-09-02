@@ -16,21 +16,61 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.CardView
-        android:id="@+id/hint_card"
-        android:layout_width="wrap_content"
+        android:id="@+id/recommendation_card"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginTop="16dp"
         app:cardElevation="5dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="Long click to set location" />
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:padding="16dp"
+                android:text="TextView"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/go"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/material_blue"
+                android:text="Go"
+                android:textColor="@android:color/white"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title" />
+
+            <Button
+                android:id="@+id/dismiss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                android:layout_marginRight="16dp"
+                android:backgroundTint="@android:color/holo_orange_dark"
+                android:text="Dismiss"
+                android:textColor="@android:color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/go"
+                app:layout_constraintRight_toLeftOf="@+id/go" />
+
+        </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
-    <include layout="@layout/new_volunteering_bottom_sheets"/>
+
+    <include layout="@layout/new_volunteering_bottom_sheets" />
 
 </android.support.design.widget.CoordinatorLayout>

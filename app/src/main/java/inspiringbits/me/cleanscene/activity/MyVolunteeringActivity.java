@@ -1,8 +1,11 @@
 package inspiringbits.me.cleanscene.activity;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +13,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.githang.statusbar.StatusBarCompat;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -49,7 +53,19 @@ public class MyVolunteeringActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_volunteering);
         ButterKnife.bind(this);
+        android.support.v7.app.ActionBar bar = getSupportActionBar();
+        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5E97DC")));
+        StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this,R.color.status_bar));
+        if (FacebookTool.isLoggedIn()) {
+            loadActivityFromServer();
+        } else {
+            loadActivityFromLocal();
+        }
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         if (FacebookTool.isLoggedIn()) {
             loadActivityFromServer();
         } else {
@@ -69,42 +85,6 @@ public class MyVolunteeringActivity extends AppCompatActivity {
             progressBar.setVisibility(View.GONE);
             return;
         }
-        /*List<VolunteeringActivity> vList=new ArrayList<VolunteeringActivity>();
-        for (String vId:vIDList){
-            Observable.create((ObservableOnSubscribe<VolunteeringActivity>) e -> {
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl(getString(R.string.base_url))
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
-                VolunteerService service = retrofit.create(VolunteerService.class);
-                VolunteeringActivity v=service.getActivityById(vId).execute().body();
-                e.onNext(v);
-                e.onComplete();
-            })
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(new Observer<VolunteeringActivity>() {
-                        @Override
-                        public void onSubscribe(@NonNull Disposable d) {
-
-                        }
-
-                        @Override
-                        public void onNext(@NonNull VolunteeringActivity volunteeringActivity) {
-                            vList.add(volunteeringActivity);
-                        }
-
-                        @Override
-                        public void onError(@NonNull Throwable e) {
-
-                        }
-
-                        @Override
-                        public void onComplete() {
-
-                        }
-                    });
-        }*/
         activityAdapter=new MyActivityAdapter(MyVolunteeringActivity.this,vList);
         myActivity.setAdapter(activityAdapter);
         activityAdapter.notifyDataSetChanged();

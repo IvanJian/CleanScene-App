@@ -31,4 +31,12 @@
         </menu>
     </item>
 
+    <item android:title="About Us">
+        <menu>
+            <item
+                android:id="@+id/about_us"
+                android:title="About Us" />
+        </menu>
+    </item>
+
 </menu>

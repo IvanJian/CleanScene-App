@@ -79,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                                 if (user.getFacebookId()!=null){
                                     loadUser(user);
+                                    LoginActivity.this.finish();
                                 }
 
                             }

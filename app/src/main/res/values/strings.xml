@@ -25,8 +25,8 @@
     <string name="ms">Ms.</string>
     <string name="photo_uploading_fail">Failed to submit your report. Please try later.</string>
     <string name="report_map_title">Historical Reports</string>
-    <!--<string name="base_url">http://45.55.148.250:8080</string>-->
-    <string name="base_url">http://192.168.0.19:8080</string>
+    <string name="base_url">http://45.55.148.250:8080</string>
+    <!--<string name="base_url">http://192.168.0.19:8080</string>-->
     <string name="base_img_url">http://45.55.148.250</string>
     <string name="dead_animal">Dead Animals</string>
     <string-array name="pollution_type">
@@ -48,7 +48,7 @@
     </string-array>
 
     <string name="title_activity_picture">PictureActivity</string>
-    <string name="title_activity_main_2">MainActivity_2</string>
+    <string name="title_activity_main_2">Clean Scene</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -56,5 +56,5 @@
     <string name="fb_login_protocol_scheme">fb114497069190644</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_volunteering_detail">Volunteering</string>
-
+    <string name="invitation_link_base_url">http://ivanjian.me/invitation.html</string>
 </resources>

@@ -23,6 +23,15 @@ public class ReportModel {
     private String status;
     private String closeDate;
     private String closeTime;
+    private int userId;
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
     public String getStatus() {
         return status;

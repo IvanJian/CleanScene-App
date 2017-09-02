@@ -22,7 +22,15 @@ public class VolunteeringActivity {
     private List<User> members;
     private String status;
     private Integer anonymousMember;
+    private String weather;
 
+    public String getWeather() {
+        return weather;
+    }
+
+    public void setWeather(String weather) {
+        this.weather = weather;
+    }
 
     public Integer getVolunteeringActivityId() {
         return volunteeringActivityId;

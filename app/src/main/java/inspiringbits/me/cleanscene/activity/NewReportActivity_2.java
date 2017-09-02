@@ -74,6 +74,7 @@ import inspiringbits.me.cleanscene.R;
 import inspiringbits.me.cleanscene.model.BasicMessage;
 import inspiringbits.me.cleanscene.model.ReportModel;
 import inspiringbits.me.cleanscene.rest_service.ReportService;
+import inspiringbits.me.cleanscene.tool.FacebookTool;
 import inspiringbits.me.cleanscene.view.NestedMapView;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -599,7 +600,9 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
                 reportModel.setDescription(description.getText().toString());
                 reportModel.setLocationName("location");
                 reportModel.setHasMoreDetail(true);
+                reportModel.setUserId(Integer.parseInt(FacebookTool.getUserId(NewReportActivity_2.this)));
             }else {
+                reportModel.setUserId(Integer.parseInt(FacebookTool.getUserId(NewReportActivity_2.this)));
                 reportModel.setLatitude(locationMarker.getPosition().latitude);
                 reportModel.setLongitude(locationMarker.getPosition().longitude);
                 reportModel.setHasMoreDetail(false);

@@ -25,8 +25,8 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -55,6 +55,7 @@ import butterknife.OnClick;
 import inspiringbits.me.cleanscene.R;
 import inspiringbits.me.cleanscene.model.BasicMessage;
 import inspiringbits.me.cleanscene.model.VolunteeringActivity;
+import inspiringbits.me.cleanscene.model.VolunteeringRecommendation;
 import inspiringbits.me.cleanscene.rest_service.VolunteerService;
 import inspiringbits.me.cleanscene.tool.DateTimeTool;
 import inspiringbits.me.cleanscene.tool.FacebookTool;
@@ -75,8 +76,6 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
     Marker marker;
     @BindView(R.id.header)
     ConstraintLayout headerLayout;
-    @BindView(R.id.hint_card)
-    CardView hintCard;
     @BindView(R.id.address1)
     TextView address1;
     @BindView(R.id.address2)
@@ -94,6 +93,14 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
     CheckBox isPrivate;
     @BindView(R.id.submit)
     Button submmit;
+    @BindView(R.id.title)
+    TextView title;
+    @BindView(R.id.go)
+    Button go;
+    @BindView(R.id.recommendation_card)
+    CardView recommendationCard;
+    private LatLng recommendationLatlng;
+    GoogleMap googleMap;
 
     @OnClick(R.id.more_info)
     void showDetail(View v) {
@@ -104,7 +111,7 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
         }
     }
 
-    private void setDateTimePickerDialog(){
+    private void setDateTimePickerDialog() {
         Calendar myCalendar = Calendar.getInstance();
         DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
             myCalendar.set(Calendar.YEAR, year);
@@ -126,7 +133,7 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
                 mTimePicker = new TimePickerDialog(NewVolunteeringActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        startTime.setText( selectedHour + ":" + selectedMinute);
+                        startTime.setText(selectedHour + ":" + selectedMinute);
                     }
                 }, hour, minute, true);//Yes 24 hour time
                 mTimePicker.setTitle("Start Time");
@@ -143,13 +150,51 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
                 mTimePicker = new TimePickerDialog(NewVolunteeringActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        endTime.setText( selectedHour + ":" + selectedMinute);
+                        endTime.setText(selectedHour + ":" + selectedMinute);
                     }
                 }, hour, minute, true);//Yes 24 hour time
                 mTimePicker.setTitle("End Time");
                 mTimePicker.show();
             }
         });
+    }
+
+    private void getRecommendation() {
+        Observable.create((ObservableOnSubscribe<VolunteeringRecommendation>) e -> {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(getString(R.string.base_url))
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            VolunteerService volunteerService = retrofit.create(VolunteerService.class);
+            VolunteeringRecommendation vR = volunteerService.getRecommendation().execute().body();
+            e.onNext(vR);
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<VolunteeringRecommendation>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull VolunteeringRecommendation volunteeringRecommendation) {
+                        title.setText(volunteeringRecommendation.getTitle());
+                        recommendationCard.setVisibility(View.VISIBLE);
+                        recommendationLatlng = new LatLng(volunteeringRecommendation.getLatitude(), volunteeringRecommendation.getLongitude());
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        e.printStackTrace();
+                        return;
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     @Override
@@ -161,8 +206,8 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
         StatusBarCompat.setStatusBarColor(this, ContextCompat.getColor(this, R.color.status_bar));
         ButterKnife.bind(this);
         setDateTimePickerDialog();
-
-        bsb = BottomSheetBehavior.from(findViewById(R.id.design_bottom_sheet));
+        recommendationCard.setVisibility(View.GONE);
+        bsb = BottomSheetBehavior.from(findViewById(R.id.my_design_bottom_sheet));
         bsb.setState(BottomSheetBehavior.STATE_HIDDEN);
         ViewTreeObserver observer = headerLayout.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -180,11 +225,9 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
                 switch (newState) {
                     case BottomSheetBehavior.STATE_EXPANDED:
                         moreInfo.setText("SHOW MAP");
-                        hintCard.setVisibility(View.GONE);
                         break;
                     case BottomSheetBehavior.STATE_COLLAPSED:
                         moreInfo.setText("MORE INFO");
-                        hintCard.setVisibility(View.VISIBLE);
                         break;
                 }
             }
@@ -206,6 +249,8 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
 
     @Override
     public void onMapReady(GoogleMap map) {
+        getRecommendation();
+        this.googleMap = map;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             map.moveCamera(CameraUpdateFactory.zoomTo(15.0f));
@@ -229,22 +274,28 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if (marker != null) {
-                    marker.remove();
-                }
-                marker = map.addMarker(new MarkerOptions().position(latLng));
-                //Log.d("location", "onMapLongClick: " + getLocationInformation(latLng));
-                Observable.create((ObservableOnSubscribe<String>) e -> {
-                    String address = getLocationInformation(latLng);
-                    e.onNext(address);
-                    e.onComplete();
-                })
+                selectLocation(latLng, map);
+            }
+        });
+    }
+
+    private void selectLocation(LatLng latLng, GoogleMap map) {
+        if (marker != null) {
+            marker.remove();
+        }
+        marker = map.addMarker(new MarkerOptions().position(latLng));
+        //Log.d("location", "onMapLongClick: " + getLocationInformation(latLng));
+        Observable.create((ObservableOnSubscribe<String>) e -> {
+            String address = getLocationInformation(latLng);
+            e.onNext(address);
+            e.onComplete();
+        })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String>() {
                     @Override
                     public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-                        
+
                     }
 
                     @Override
@@ -270,8 +321,6 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
 
                     }
                 });
-            }
-        });
     }
 
     private String getLocationInformation(LatLng latLng) {
@@ -343,84 +392,122 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
 
     @OnClick(R.id.submit)
     public void submit() {
-        if (!FacebookTool.isLoggedIn()){
-            Toast.makeText(this,"Please login first.",Toast.LENGTH_LONG).show();
-            startActivity(new Intent(this,LoginActivity.class));
+        submmit.setClickable(false);
+        submmit.setBackgroundColor(Color.GRAY);
+        if (!FacebookTool.isLoggedIn()) {
+            Toast.makeText(this, "Please login first.", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(this, LoginActivity.class));
+            submmit.setClickable(true);
+            submmit.setBackgroundColor(Color.parseColor("#"+Integer.toHexString(ContextCompat.getColor(NewVolunteeringActivity.this, R.color.material_blue))));
             return;
         }
-        String dateStr=eventDate.getText().toString();
-        String fromTimeStr=startTime.getText().toString()+":00";
-        String endTimeStr=endTime.getText().toString()+":00";
+        if ("".equals(eventDate.getText().toString()) || "".equals(startTime.getText().toString()) || "".equals(endTime.getText().toString()) ){
+            Toast.makeText(this, "Please enter the detail of the activity", Toast.LENGTH_LONG).show();
+            submmit.setClickable(true);
+            submmit.setBackgroundColor(Color.parseColor("#"+Integer.toHexString(ContextCompat.getColor(NewVolunteeringActivity.this, R.color.material_blue))));
+            return;
+        }
+        String dateStr = eventDate.getText().toString();
+        String fromTimeStr = startTime.getText().toString() + ":00";
+        String endTimeStr = endTime.getText().toString() + ":00";
         try {
-            if (DateTimeTool.compareDate(dateStr,DateTimeTool.getCurrentDate()).equals(DateTimeTool.BEFORE) ||  DateTimeTool.compareDateTime(dateStr,fromTimeStr,dateStr,endTimeStr).equals(DateTimeTool.AFTER)){
-                Toast.makeText(this,"Invalid date and time",Toast.LENGTH_LONG).show();
+            if (DateTimeTool.compareDate(dateStr, DateTimeTool.getCurrentDate()).equals(DateTimeTool.BEFORE) || DateTimeTool.compareDateTime(dateStr, fromTimeStr, dateStr, endTimeStr).equals(DateTimeTool.AFTER)) {
+                Toast.makeText(this, "Invalid date and time", Toast.LENGTH_LONG).show();
+                submmit.setClickable(true);
+                submmit.setBackgroundColor(Color.parseColor("#"+Integer.toHexString(ContextCompat.getColor(NewVolunteeringActivity.this, R.color.material_blue))));
                 return;
             }
         } catch (ParseException e) {
             e.printStackTrace();
             return;
         }
-        VolunteeringActivity volunteeringActivity=new VolunteeringActivity();
+        VolunteeringActivity volunteeringActivity = new VolunteeringActivity();
         volunteeringActivity.setActivityDate(dateStr);
         volunteeringActivity.setFromTime(fromTimeStr);
         volunteeringActivity.setToTime(endTimeStr);
         volunteeringActivity.setLatitude(marker.getPosition().latitude);
         volunteeringActivity.setLongitude(marker.getPosition().longitude);
         volunteeringActivity.setPrivate(isPrivate.isChecked());
-        volunteeringActivity.setAddress(address1.getText()+", "+address2.getText());
-        Observable.create((ObservableOnSubscribe<BasicMessage>) e ->{
-                Retrofit retrofit = new Retrofit.Builder()
+        volunteeringActivity.setAddress(address1.getText() + ", " + address2.getText());
+        Observable.create((ObservableOnSubscribe<BasicMessage>) e -> {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(getString(R.string.base_url))
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            VolunteerService service = retrofit.create(VolunteerService.class);
+            BasicMessage basicMessage = service.createActivity(volunteeringActivity).execute().body();
+            if (basicMessage.getStatus()) {
+                Retrofit retrofit2 = new Retrofit.Builder()
                         .baseUrl(getString(R.string.base_url))
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
-                VolunteerService service=retrofit.create(VolunteerService.class);
-                BasicMessage basicMessage=service.createActivity(volunteeringActivity).execute().body();
-                if (basicMessage.getStatus()){
-                    Retrofit retrofit2 = new Retrofit.Builder()
-                            .baseUrl(getString(R.string.base_url))
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .build();
-                    VolunteerService service2=retrofit2.create(VolunteerService.class);
-                    SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(NewVolunteeringActivity.this);
-                    String userId=sharedPreferences.getString(MainActivity_2.USER_ID,"");
-                    Log.d("damn", "submit: "+basicMessage.getContent()+userId);
-                    BasicMessage message=service.joinActivity(basicMessage.getContent(),userId).execute().body();
-                    message.setContent(basicMessage.getContent());
-                    e.onNext(message);
-                }else {
-                    return;
+                VolunteerService service2 = retrofit2.create(VolunteerService.class);
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(NewVolunteeringActivity.this);
+                String userId = sharedPreferences.getString(MainActivity_2.USER_ID, "");
+                Log.d("damn", "submit: " + basicMessage.getContent() + userId);
+                BasicMessage message = null;
+                try {
+                    message = service2.joinActivity(basicMessage.getContent(), userId).execute().body();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
                 }
-                e.onComplete();
-            })
+                Log.d("damn", "submit: " + message.getCode()+message.getStatus()+message.getCode());
+                message.setContent(basicMessage.getContent());
+                Log.d("damn", "submit: " + basicMessage.getContent() + userId);
+                e.onNext(message);
+            } else {
+                return;
+            }
+            e.onComplete();
+        })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<BasicMessage>() {
                     @Override
                     public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
+                        //progressBar.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onNext(@io.reactivex.annotations.NonNull BasicMessage basicMessage) {
-                        if (basicMessage.getStatus()){
-                            Intent intent=new Intent(NewVolunteeringActivity.this,VolunteeringDetailActivity.class);
-                            intent.putExtra(VolunteeringDetailActivity.VOLUNTEERING_ACTIVITY_ID,basicMessage.getContent());
-
+                        if (basicMessage.getStatus()) {
+                            Intent intent = new Intent(NewVolunteeringActivity.this, VolunteeringDetailActivity.class);
+                            intent.putExtra(VolunteeringDetailActivity.VOLUNTEERING_ACTIVITY_ID, basicMessage.getContent());
+                            Log.d("fuck", "onNext: "+basicMessage.getContent());
                             startActivity(intent);
+                            NewVolunteeringActivity.this.finish();
+                        } else {
+                            Toast.makeText(NewVolunteeringActivity.this,"Invalid date and time.",Toast.LENGTH_SHORT).show();
+                            submmit.setClickable(true);
+                            submmit.setBackgroundColor(Color.parseColor("#"+Integer.toHexString(ContextCompat.getColor(NewVolunteeringActivity.this, R.color.material_blue))));
+
                         }
                     }
 
                     @Override
                     public void onError(@io.reactivex.annotations.NonNull Throwable e) {
                         e.printStackTrace();
+                        submmit.setClickable(true);
+                        submmit.setBackgroundColor(Color.parseColor("#"+Integer.toHexString(ContextCompat.getColor(NewVolunteeringActivity.this, R.color.material_blue))));
                     }
 
                     @Override
                     public void onComplete() {
 
-                }
-            });
+                    }
+                });
 
 
+    }
+
+    @OnClick(R.id.go)
+    public void onViewClicked() {
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(recommendationLatlng));
+        selectLocation(recommendationLatlng, googleMap);
+    }
+
+    @OnClick(R.id.dismiss)
+    public void dismiss() {
+        recommendationCard.setVisibility(View.GONE);
     }
 }

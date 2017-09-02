@@ -16,7 +16,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/report_bg"
+        android:background="@drawable/bg_yellow"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -32,7 +32,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/map_bg"
+        android:background="@drawable/bg_red"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="@+id/guideline"
@@ -48,7 +48,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/my_report_backgroud"
+        android:background="@drawable/bg_pupple"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -64,7 +64,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/volunteer_bg"
+        android:background="@drawable/bg_blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@id/guideline"
@@ -99,7 +99,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:text="Volunteer Centre"
+        android:text="Centres"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -176,7 +176,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.483"
-        app:srcCompat="@mipmap/map_icon" />
+        app:srcCompat="@mipmap/search" />
 
     <ImageView
         android:id="@+id/imageView5"
@@ -192,7 +192,7 @@
         app:layout_constraintRight_toLeftOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.483"
-        app:srcCompat="@mipmap/report_icon" />
+        app:srcCompat="@mipmap/tree" />
 
     <ImageView
         android:id="@+id/imageView6"
@@ -208,7 +208,7 @@
         app:layout_constraintRight_toLeftOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="@+id/guideline2"
         app:layout_constraintVertical_bias="0.46"
-        app:srcCompat="@mipmap/my_report_icon" />
+        app:srcCompat="@mipmap/calendar" />
 
     <ImageView
         android:id="@+id/imageView7"
@@ -224,5 +224,5 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline2"
         app:layout_constraintVertical_bias="0.46"
-        app:srcCompat="@mipmap/volunteer_icon" />
+        app:srcCompat="@mipmap/home" />
 </android.support.constraint.ConstraintLayout>

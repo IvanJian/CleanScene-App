@@ -227,7 +227,7 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
                         moreInfo.setText("SHOW MAP");
                         break;
                     case BottomSheetBehavior.STATE_COLLAPSED:
-                        moreInfo.setText("MORE INFO");
+                        moreInfo.setText("CREATE HERE");
                         break;
                 }
             }
@@ -504,6 +504,7 @@ public class NewVolunteeringActivity extends AppCompatActivity implements OnMapR
     public void onViewClicked() {
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(recommendationLatlng));
         selectLocation(recommendationLatlng, googleMap);
+        recommendationCard.setVisibility(View.GONE);
     }
 
     @OnClick(R.id.dismiss)

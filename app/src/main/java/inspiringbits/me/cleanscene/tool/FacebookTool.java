@@ -28,6 +28,6 @@ public class FacebookTool {
 
     public static String getUserId(Context context){
         SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPreferences.getString(MainActivity_2.USER_ID,"");
+        return sharedPreferences.getString(MainActivity_2.USER_ID,"0");
     }
 }

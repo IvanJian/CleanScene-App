@@ -600,9 +600,17 @@ public class NewReportActivity_2 extends AppCompatActivity implements OnMapReady
                 reportModel.setDescription(description.getText().toString());
                 reportModel.setLocationName("location");
                 reportModel.setHasMoreDetail(true);
-                reportModel.setUserId(Integer.parseInt(FacebookTool.getUserId(NewReportActivity_2.this)));
+                try {
+                    reportModel.setUserId(Integer.parseInt(FacebookTool.getUserId(NewReportActivity_2.this)));
+                } catch (Exception e){
+                    reportModel.setUserId(1);
+                }
             }else {
-                reportModel.setUserId(Integer.parseInt(FacebookTool.getUserId(NewReportActivity_2.this)));
+                try {
+                    reportModel.setUserId(Integer.parseInt(FacebookTool.getUserId(NewReportActivity_2.this)));
+                } catch (Exception e){
+                    reportModel.setUserId(1);
+                }
                 reportModel.setLatitude(locationMarker.getPosition().latitude);
                 reportModel.setLongitude(locationMarker.getPosition().longitude);
                 reportModel.setHasMoreDetail(false);

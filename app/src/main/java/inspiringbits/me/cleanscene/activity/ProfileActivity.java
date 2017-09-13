@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.githang.statusbar.StatusBarCompat;
+import com.google.gson.Gson;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,7 +43,7 @@ public class ProfileActivity extends AppCompatActivity {
     TextView gender;
     @BindView(R.id.email)
     TextView email;
-    int userId;
+    Integer userId;
     @BindView(R.id.num_report)
     TextView numReport;
     @BindView(R.id.num_volunteer)
@@ -74,8 +76,8 @@ public class ProfileActivity extends AppCompatActivity {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             UserService userService = retrofit.create(UserService.class);
-            BasicMessage m1 = userService.getNumOfReport(FacebookTool.getUserId(ProfileActivity.this)).execute().body();
-            BasicMessage m2 = userService.getNumOfVolunteering(FacebookTool.getUserId(ProfileActivity.this)).execute().body();
+            BasicMessage m1 = userService.getNumOfReport(userId.toString()).execute().body();
+            BasicMessage m2 = userService.getNumOfVolunteering(userId.toString()).execute().body();
             if (m1.getStatus() && m2.getStatus()) {
                 String[] strs = {m1.getContent(), m2.getContent()};
                 e.onNext(strs);
@@ -95,6 +97,8 @@ public class ProfileActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(@NonNull String[] integers) {
+                        Gson gson=new Gson();
+                        Log.d("Profile ", "onNext: "+gson.toJson(integers));
                         numReport.setText(integers[0]);
                         numVolunteer.setText(integers[1]);
                     }
@@ -133,6 +137,8 @@ public class ProfileActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(@NonNull User user) {
+                        Gson gson=new Gson();
+                        Log.d("Profile ", "onNext: "+gson.toJson(user));
                         name.setText(user.getFullname());
                         gender.setText(user.getGender());
                         email.setText(user.getEmail());

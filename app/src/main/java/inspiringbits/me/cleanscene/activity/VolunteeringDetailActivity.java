@@ -319,7 +319,7 @@ public class VolunteeringDetailActivity extends AppCompatActivity implements OnM
         VolunteeringDetailActivity.this.googleMap = googleMap;
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         aId = getIntent().getStringExtra(this.VOLUNTEERING_ACTIVITY_ID);
-        loadActivityDetail(aId);
+        loadActivityDetail(volunteeringActivityId);
     }
 
     @OnClick({R.id.copy_link, R.id.drop_out, R.id.join_fab})
@@ -339,7 +339,7 @@ public class VolunteeringDetailActivity extends AppCompatActivity implements OnM
                                 .addConverterFactory(GsonConverterFactory.create())
                                 .build();
                         VolunteerService volunteerService = retrofit.create(VolunteerService.class);
-                        BasicMessage message = volunteerService.dropout(VolunteeringDetailActivity.this.aId, FacebookTool.getUserId(VolunteeringDetailActivity.this)).execute().body();
+                        BasicMessage message = volunteerService.dropout(VolunteeringDetailActivity.this.volunteeringActivityId, FacebookTool.getUserId(VolunteeringDetailActivity.this)).execute().body();
                         e.onNext(message);
                         e.onComplete();
                     })
@@ -355,7 +355,7 @@ public class VolunteeringDetailActivity extends AppCompatActivity implements OnM
                                 public void onNext(@NonNull BasicMessage basicMessage) {
                                     if (basicMessage.getStatus()) {
                                         Toast.makeText(VolunteeringDetailActivity.this, "You have droped out from this activity", Toast.LENGTH_SHORT).show();
-                                        loadActivityDetail(VolunteeringDetailActivity.this.aId);
+                                        loadActivityDetail(VolunteeringDetailActivity.this.volunteeringActivityId);
                                         return;
                                     } else {
                                         Toast.makeText(VolunteeringDetailActivity.this, basicMessage.getContent(), Toast.LENGTH_SHORT).show();
@@ -387,7 +387,7 @@ public class VolunteeringDetailActivity extends AppCompatActivity implements OnM
                     Observable.create((ObservableOnSubscribe<BasicMessage>) e -> {
                         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(VolunteeringDetailActivity.this);
                         String userId = sp.getString(MainActivity_2.USER_ID, "");
-                        BasicMessage basicMessage = volunteerService.joinVolunteerActivity(VolunteeringDetailActivity.this.aId, userId).execute().body();
+                        BasicMessage basicMessage = volunteerService.joinVolunteerActivity(VolunteeringDetailActivity.this.volunteeringActivityId, userId).execute().body();
                         e.onNext(basicMessage);
                         e.onComplete();
                     })
@@ -428,7 +428,7 @@ public class VolunteeringDetailActivity extends AppCompatActivity implements OnM
                     }.getType());
                     if (vList != null && vList.size() != 0) {
                         for (VolunteeringActivity v : vList) {
-                            if (v.getVolunteeringActivityId().toString().equals(VolunteeringDetailActivity.this.aId)) {
+                            if (v.getVolunteeringActivityId().toString().equals(VolunteeringDetailActivity.this.volunteeringActivityId)) {
                                 Toast.makeText(this, "You are already a member of this activity.", Toast.LENGTH_SHORT).show();
                                 return;
                             }
@@ -465,7 +465,7 @@ public class VolunteeringDetailActivity extends AppCompatActivity implements OnM
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             VolunteerService volunteerService = retrofit.create(VolunteerService.class);
-            BasicMessage basicMessage = volunteerService.joinVolunteeringActivityAnonymous(Integer.parseInt(VolunteeringDetailActivity.this.aId)).execute().body();
+            BasicMessage basicMessage = volunteerService.joinVolunteeringActivityAnonymous(Integer.parseInt(VolunteeringDetailActivity.this.volunteeringActivityId)).execute().body();
             e.onNext(basicMessage);
             e.onComplete();
         })
@@ -484,7 +484,7 @@ public class VolunteeringDetailActivity extends AppCompatActivity implements OnM
                             String vListStr = sharedPreferences.getString(MyVolunteeringActivity.VOLUNTEERING_LIST, "");
                             VolunteeringActivity volunteeringActivity = new VolunteeringActivity();
                             volunteeringActivity.setAddress(address.getText().toString());
-                            volunteeringActivity.setVolunteeringActivityId(Integer.parseInt(VolunteeringDetailActivity.this.aId));
+                            volunteeringActivity.setVolunteeringActivityId(Integer.parseInt(VolunteeringDetailActivity.this.volunteeringActivityId));
                             String[] times = time.getText().toString().split("-");
                             volunteeringActivity.setActivityDate(date.getText().toString());
                             volunteeringActivity.setFromTime(times[0]);
@@ -525,6 +525,6 @@ public class VolunteeringDetailActivity extends AppCompatActivity implements OnM
         /*progressBar.setVisibility(View.VISIBLE);
         contentScroll.setVisibility(View.GONE);
         joinFab.setVisibility(View.GONE);*/
-        loadActivityDetail(this.aId);
+        loadActivityDetail(this.volunteeringActivityId);
     }
 }

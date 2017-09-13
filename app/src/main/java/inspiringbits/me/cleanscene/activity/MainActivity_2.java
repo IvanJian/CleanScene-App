@@ -130,14 +130,21 @@ public class MainActivity_2 extends AppCompatActivity
                                 Log.d("res", "onCompleted: "+response.toString());
 
                                 User user=new User();
-                                try {
-                                    Log.d("name", "onCompleted: "+response.getJSONObject().getString("name"));
+                                try{
                                     user.setGender(response.getJSONObject().getString("gender"));
+                                }catch (Exception e){
+                                }
+                                try{
                                     user.setEmail(response.getJSONObject().getString("email"));
+                                }catch (Exception e){
+                                }
+                                try{
                                     user.setFacebookId(response.getJSONObject().getString("id"));
+                                }catch (Exception e){
+                                }
+                                try{
                                     user.setFullname(response.getJSONObject().getString("name"));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                }catch (Exception e){
                                 }
                                 if (user.getFacebookId()!=null){
                                     loadUser(user);
@@ -199,17 +206,22 @@ public class MainActivity_2 extends AppCompatActivity
                         @Override
                         public void onCompleted(JSONObject object, GraphResponse response) {
                             Log.d("res", "onCompleted: "+response.toString());
-
                             User user=new User();
-                            try {
-                                Log.d("name", "onCompleted: "+response.getJSONObject().getString("name"));
+                            try{
                                 user.setGender(response.getJSONObject().getString("gender"));
+                            }catch (Exception e){
+                            }
+                            try{
                                 user.setEmail(response.getJSONObject().getString("email"));
+                            }catch (Exception e){
+                            }
+                            try{
                                 user.setFacebookId(response.getJSONObject().getString("id"));
+                            }catch (Exception e){
+                            }
+                            try{
                                 user.setFullname(response.getJSONObject().getString("name"));
-                                loadUser(user);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                            }catch (Exception e){
                             }
                             if (user.getFacebookId()!=null){
                                 loadUser(user);

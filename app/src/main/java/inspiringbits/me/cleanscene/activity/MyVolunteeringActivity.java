@@ -81,6 +81,9 @@ public class MyVolunteeringActivity extends AppCompatActivity {
         Gson gson=new Gson();
         List<VolunteeringActivity> vList=gson.fromJson(vIDListStr,new TypeToken<List<VolunteeringActivity>>(){}.getType());
         if (vList==null||vList.size()==0){
+            activityAdapter=new MyActivityAdapter(MyVolunteeringActivity.this,vList);
+            myActivity.setAdapter(activityAdapter);
+            activityAdapter.notifyDataSetChanged();
             hint.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
             return;
@@ -121,6 +124,9 @@ public class MyVolunteeringActivity extends AppCompatActivity {
                     @Override
                     public void onNext(@NonNull List<VolunteeringActivity> volunteeringActivities) {
                         if (volunteeringActivities==null||volunteeringActivities.size()==0){
+                            activityAdapter=new MyActivityAdapter(MyVolunteeringActivity.this,volunteeringActivities);
+                            myActivity.setAdapter(activityAdapter);
+                            activityAdapter.notifyDataSetChanged();
                             hint.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.GONE);
                             return;

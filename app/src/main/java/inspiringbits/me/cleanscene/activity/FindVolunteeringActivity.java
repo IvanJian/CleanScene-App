@@ -1,18 +1,28 @@
 package inspiringbits.me.cleanscene.activity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.githang.statusbar.StatusBarCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -32,6 +42,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import inspiringbits.me.cleanscene.R;
 import inspiringbits.me.cleanscene.model.VolunteeringActivity;
 import inspiringbits.me.cleanscene.rest_service.VolunteerService;
@@ -53,7 +64,16 @@ public class FindVolunteeringActivity extends AppCompatActivity implements OnMap
     FusedLocationProviderClient mFusedLocationClient;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+    @BindView(R.id.num_of_activity)
+    TextView numOfActivity;
+    @BindView(R.id.search)
+    TextView search;
 
+    PopupWindow filterWindow;
+    Button filterBtn;
+    @BindView(R.id.mainLayout)
+    ConstraintLayout mainLayout;
+    Spinner time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,9 +211,7 @@ public class FindVolunteeringActivity extends AppCompatActivity implements OnMap
                             LatLng latLng = new LatLng(activity.getLatitude(), activity.getLongitude());
                             Marker marker = map.addMarker(new MarkerOptions()
                                     .position(latLng)
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                                    .title(activity.getActivityDate())
-                                    .snippet("From: " + activity.getFromTime() + "\nTo: " + activity.getToTime()));
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                             marker.setTag(activity);
                         }
                     }
@@ -211,4 +229,24 @@ public class FindVolunteeringActivity extends AppCompatActivity implements OnMap
                 });
     }
 
+    @OnClick(R.id.search)
+    public void openFilterWindow() {
+        LayoutInflater inflater = (LayoutInflater) this
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.volunteer_filter_window,
+                (ViewGroup) findViewById(R.id.report_filter));
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true;
+        filterWindow = new PopupWindow(layout, width, height, focusable);
+        filterBtn = (Button) layout.findViewById(R.id.apply_filter);
+        filterBtn.setOnClickListener(v -> {
+            applyFilter();
+        });
+        time = (Spinner) layout.findViewById(R.id.time);
+        filterWindow.showAtLocation(mainLayout, Gravity.CENTER, 0, 0);
+    }
+
+    private void applyFilter() {
+    }
 }
